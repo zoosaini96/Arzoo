@@ -5,8 +5,7 @@
 The three source clips are joined in upload order: hook, return-to-work letter, how lenders decide and advice.
 
 ## Third-party media (Mixkit Free License: free for commercial use, no attribution required)
-B-roll (mixkit.co video IDs): 36109 (pregnant belly), 12879 (woman with house key), 17051 (signing a document),
-47007 (calculator and money), 46977 (magnifying glass on financial papers), 49970 (mother and baby), 33357 (couple with house keys).
+B-roll (mixkit.co video IDs): 36109 (pregnant belly), 17051 (signing a document), 33357 (couple with house keys).
 
 Music: "Happy Home" (Mixkit track 801).
 

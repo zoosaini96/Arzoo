@@ -34,7 +34,7 @@ CAPS = [
     (g2(0.43), g2(1.8), "Your *employer* only needs"),
     (g2(1.8), g2(3.0), "a *return-to-work letter*"),
     (g2(3.0), g2(5.3), "showing your *return date*,"),
-    (g2(5.6), g2(8.2), "*current position* & *salary*."),
+    (g2(5.6), g2(8.2), "*position* & *salary*."),
     (g3(0.0), g3(2.9), "Many *lenders* can consider"),
     (g3(2.9), g3(4.4), "your *regular employment income*"),
     (g3(4.4), g3(5.55), "instead of reduced *maternity benefits*."),
@@ -52,11 +52,7 @@ CAPS = [
 # B-roll: (file, src_start, t0, t1, crop_center_x (0-1 of 1280), label)
 BROLL = [
     ("36109.mp4", 4.0, g1(2.15), g1(4.75), 0.60, None),
-    ("12879.mp4", 0.3, g1(7.05), g1(9.9), 0.50, "You CAN qualify for a mortgage"),
     ("17051.mp4", 1.9, g2(1.75), g2(3.05), 0.55, "Return-to-Work Letter"),
-    ("47007.mp4", 0.5, g3(0.45), g3(2.9), 0.40, "Lenders look at your income"),
-    ("46977.mp4", 2.0, g3(5.6), g3(7.95), 0.45, "Every lender is different"),
-    ("49970.mp4", 0.2, g3(14.0), g3(16.6), 0.50, None),
     ("33357.mp4", 1.0, g3(18.4), g3(21.0), 0.50, "Explore your options"),
 ]
 CARD_W, CARD_H, CARD_CY = 940, 1175, 860
@@ -65,7 +61,7 @@ CHAPTERS = [(0, B2, "MORTGAGE ON MATERNITY LEAVE"), (B2, B3, "WHAT YOU NEED"),
             (B3, g3(13.87), "HOW LENDERS DECIDE"), (g3(13.87), SPEECH_END, "MY ADVICE")]
 
 # A-roll zoom keyframes (start, end, zoom). Default gentle push.
-PUNCH = [(g1(5.2), g1(7.05), 1.20), (g2(0.0), g2(1.75), 1.10), (g2(3.05), g2(8.2), 1.0),
+PUNCH = [(g1(5.2), g1(7.05), 1.20), (g1(7.05), g1(10.2), 1.08), (g3(5.6), g3(7.95), 1.12), (g2(0.0), g2(1.75), 1.10), (g2(3.05), g2(8.2), 1.0),
          (g3(2.9), g3(5.6), 1.0), (g3(7.95), g3(13.87), 1.0), (g3(16.6), g3(18.4), 1.14),
          (g3(21.0), SPEECH_END + 10, 1.12)]
 
@@ -281,7 +277,7 @@ def main():
     aroll = reader(["ffmpeg", "-v", "error", "-i", f"{OUT}/aroll.mp4", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], W, H)
 
     cap_cache = {i: caption_img(c[2]) for i, c in enumerate(CAPS)}
-    chips = {i: chip_img(b[5], icon={0: None, 1: "check", 2: "doc", 3: None, 4: None, 6: "bulb"}.get(i)) for i, b in enumerate(BROLL) if b[5]}
+    chips = {i: chip_img(b[5], icon={1: "doc", 2: "bulb"}.get(i)) for i, b in enumerate(BROLL) if b[5]}
     chips_extra = {"dream": chip_img("Don't put your dream home on hold", bg=(255, 183, 3), fg=NAVY, size=40, icon=None)}
     chap = {c[2]: chapter_img(c[2]) for c in CHAPTERS}
     TITLE, YES, END = title_img(), yes_img(), endcard_img()
@@ -290,7 +286,7 @@ def main():
     ImageDraw.Draw(card_border).rounded_rectangle([0, 0, CARD_W + 15, CARD_H + 15], 54, fill=(255, 255, 255, 255))
     card_border = shadowed(card_border, blur=26, off=(0, 16), alpha=150)
 
-    CL1 = ("Your letter should show", ["Return date", "Current position", "Salary"], g2(3.05), g2(8.2), [g2(4.5), g2(5.9), g2(6.85)])
+    CL1 = ("Your letter should show", ["Return date", "Position", "Salary"], g2(3.05), g2(8.2), [g2(4.5), g2(5.9), g2(6.85)])
     CL2 = ("Lenders also check", ["Credit history", "Existing debts", "Financial situation"], g3(7.95), g3(13.87), [g3(8.6), g3(9.8), g3(10.9)])
     CMP = (g3(2.9), g3(5.55))
     YES_T = (g1(5.25), g1(7.05))
@@ -338,7 +334,7 @@ def main():
                 paste(img, c, W/2, CARD_CY, s, a)
                 if b[5]:
                     ch = chips[i]
-                    if i == 6 and t > g3(20.0): ch = chips_extra["dream"]
+                    if b[0] == "33357.mp4" and t > g3(20.0): ch = chips_extra["dream"]
                     paste(img, ch, W/2, CARD_CY + CARD_H/2 - 10, ease_out_back((t - t0 - 0.25) / 0.35), a)
 
         L = img
