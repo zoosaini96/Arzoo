@@ -1,0 +1,81 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF6EF;--ink:#1B2A41;--gold:#C9A25E;--soft:#5B6475;--tint:#F1E7D4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#ddd;font-family:Inter,sans-serif}
+.slide{width:1080px;height:1350px;background:var(--bg);color:var(--ink);position:relative;overflow:hidden;padding:120px 110px;display:flex;flex-direction:column;justify-content:center}
+.slide::before{content:"";position:absolute;inset:40px;border:1.5px solid rgba(201,162,94,.45);border-radius:6px;pointer-events:none}
+.count{position:absolute;top:80px;right:90px;font:500 26px Inter;letter-spacing:3px;color:var(--soft)}
+.brand{position:absolute;bottom:80px;left:110px;right:110px;display:flex;justify-content:space-between;font:500 24px Inter;color:var(--soft);letter-spacing:1px}
+.brand b{font:italic 600 28px 'Playfair Display';color:var(--ink);letter-spacing:0}
+.icon{width:120px;height:120px;border-radius:50%;background:var(--tint);display:flex;align-items:center;justify-content:center;margin-bottom:60px}
+.icon svg{width:58px;height:58px;stroke:var(--ink);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+h1{font:700 104px/1.05 'Playfair Display';letter-spacing:-1px}
+h2{font:700 88px/1.1 'Playfair Display';letter-spacing:-.5px}
+.rule{width:110px;height:4px;background:var(--gold);margin:50px 0}
+p{font:400 42px/1.5 Inter;color:var(--soft);max-width:800px}
+p strong{color:var(--ink);font-weight:600}
+.pill{display:inline-block;background:var(--gold);color:#fff;font:italic 600 64px 'Playfair Display';padding:14px 44px;border-radius:12px;margin-top:40px}
+.swipe{margin-top:80px;font:600 30px Inter;letter-spacing:2px;color:var(--ink);text-transform:uppercase}
+.swipe span{color:var(--gold)}
+ul{list-style:none;margin-top:10px}
+li{font:400 42px/1.4 Inter;color:var(--ink);display:flex;gap:28px;align-items:flex-start;margin-bottom:34px}
+li::before{content:"";flex:0 0 22px;height:22px;margin-top:17px;border-radius:50%;background:var(--gold)}
+.small{font:500 32px Inter;color:var(--soft);margin-bottom:40px}
+.cta{margin-top:50px;padding:40px 46px;background:var(--ink);color:var(--bg);border-radius:14px;font:italic 600 46px/1.3 'Playfair Display'}
+</style></head><body>
+
+<section class="slide" id="s1">
+  <div class="count">01 / 05</div>
+  <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></div>
+  <h1>Mortgage<br>approved?</h1>
+  <div><span class="pill">Not so fast!</span></div>
+  <div class="rule"></div>
+  <p>Could your mortgage <strong>still be declined?</strong></p>
+  <div class="swipe">Swipe to know what to avoid <span>→</span></div>
+  <div class="brand"><b>Arju Saini</b><span>MORTGAGE ASSOCIATE</span></div>
+</section>
+
+<section class="slide" id="s2">
+  <div class="count">02 / 05</div>
+  <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M3 13h18"/></svg></div>
+  <h2>Thinking of switching jobs?</h2>
+  <div class="rule"></div>
+  <p>A job change before closing could affect your mortgage approval, especially if your <strong>income or employment type changes.</strong></p>
+  <div class="brand"><b>Arju Saini</b><span>MORTGAGE ASSOCIATE</span></div>
+</section>
+
+<section class="slide" id="s3">
+  <div class="count">03 / 05</div>
+  <div class="icon"><svg viewBox="0 0 24 24"><path d="M5 16l1.5-5A2 2 0 0 1 8.4 9.5h7.2a2 2 0 0 1 1.9 1.5L19 16"/><rect x="3" y="16" width="18" height="4" rx="1"/><circle cx="7" cy="20" r="1.2"/><circle cx="17" cy="20" r="1.2"/></svg></div>
+  <h2>Planning to buy a new car?</h2>
+  <div class="rule"></div>
+  <p>That new car loan or financing could <strong>increase your monthly debt</strong> and affect how much mortgage you qualify for.</p>
+  <div class="brand"><b>Arju Saini</b><span>MORTGAGE ASSOCIATE</span></div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="count">04 / 05</div>
+  <div class="icon"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19"/><path d="M6 15h4"/></svg></div>
+  <h2>Don't ignore your credit!</h2>
+  <div class="rule"></div>
+  <p><strong>Missing payments, increasing credit card balances</strong> or <strong>applying for new credit</strong> could affect your financial profile.</p>
+  <div class="brand"><b>Arju Saini</b><span>MORTGAGE ASSOCIATE</span></div>
+</section>
+
+<section class="slide" id="s5">
+  <div class="count">05 / 05</div>
+  <h2>Your approval isn't the finish line!</h2>
+  <div class="rule"></div>
+  <div class="small">Until your mortgage is funded:</div>
+  <ul>
+    <li>Keep your finances stable.</li>
+    <li>Avoid unnecessary new debt.</li>
+    <li>Stay in touch with your mortgage professional.</li>
+  </ul>
+  <div class="cta">A smooth closing starts with smart decisions.</div>
+  <div class="brand"><b>Arju Saini</b><span>MORTGAGE ASSOCIATE</span></div>
+</section>
+</body></html>
