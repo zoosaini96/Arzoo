@@ -1,11 +1,11 @@
 # Maternity-leave mortgage explainer: edit notes and credits
 
-**Output:** `maternity-leave-mortgage-explainer.mp4` is 1080x1920 (9:16), 30 fps, about 43.7 s, H.264/AAC, -15.5 LUFS.
+**Output:** `maternity-leave-mortgage-explainer.mp4` is 1080x1920 (9:16), 30 fps, about 43.2 s, H.264/AAC, -15.5 LUFS.
 
 The three source clips are joined in upload order: hook, return-to-work letter, how lenders decide and advice.
 
 ## Third-party media (Mixkit Free License: free for commercial use, no attribution required)
-B-roll (mixkit.co video IDs): 36109 (pregnant belly), 17051 (signing a document), 49970 (mother and baby), 33357 (couple with house keys).
+B-roll (mixkit.co video IDs): 24945 (aerial view of suburban homes), 17051 (signing a document), 49970 (mother and baby), 33357 (couple with house keys).
 
 Music: "Happy Home" (Mixkit track 801).
 
@@ -18,6 +18,7 @@ All motion graphics, icons and captions were drawn programmatically (Inter font,
 `edit/build.py` composites the A-roll, B-roll cards, graphics and captions. `edit/mix.py` mixes the speech, ducked music and SFX.
 Both scripts expect the workspace layout `src/c1..c3.mov`, `dl/broll`, `dl/music` and `dl/sfx` next to the `edit/` folder.
 
-## Speech edit
+## Speech edits
+In clip 2, 5.933–6.267 s of the source is removed so "current position" becomes "position".
 In clip 3, about 0.13 s (10.567–10.700 s of the source) is removed from the spoken word "debits", so it is heard as "debts".
-The cut is hidden behind a punch-in zoom.
+Each cut is hidden behind a punch-in zoom.

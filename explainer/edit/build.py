@@ -12,15 +12,17 @@ def F(w, s): return ImageFont.truetype(FONT + f"Inter-{w}.otf", s)
 
 # ---------------- timeline ----------------
 C1 = (0.55, 10.2067); C2 = (0.35, 8.2017); C3 = (0.0, 23.25)
+CUT2 = (5.9333, 6.2667)  # remove 'current' before 'position'
+CUTLEN2 = CUT2[1] - CUT2[0]
 CUT3 = (10.5667, 10.70)  # remove 'i' vowel: 'debits' -> 'debts'
 CUTLEN = CUT3[1] - CUT3[0]
-D1, D2, D3 = C1[1]-C1[0], C2[1]-C2[0], C3[1]-C3[0]-CUTLEN
+D1, D2, D3 = C1[1]-C1[0], C2[1]-C2[0]-CUTLEN2, C3[1]-C3[0]-CUTLEN
 O1, O2, O3 = -C1[0], D1 - C2[0], D1 + D2 - C3[0]
 SPEECH_END = D1 + D2 + D3
 END_CARD = 2.9
 TOTAL = SPEECH_END + END_CARD
 N = int(round(TOTAL * FPS))
-g1 = lambda t: t + O1; g2 = lambda t: t + O2; g3 = lambda t: t + O3 - (CUTLEN if t >= CUT3[1] - 0.001 else 0)
+g1 = lambda t: t + O1; g2 = lambda t: t + O2 - (CUTLEN2 if t >= CUT2[1] - 0.001 else 0); g3 = lambda t: t + O3 - (CUTLEN if t >= CUT3[1] - 0.001 else 0)
 B2, B3 = D1, D1 + D2  # clip boundaries
 
 NAVY = (11, 37, 69); AMBER = (255, 183, 3); GREEN = (46, 196, 140); WHITE = (255, 255, 255)
@@ -53,7 +55,7 @@ CAPS = [
 
 # B-roll: (file, src_start, t0, t1, crop_center_x (0-1 of 1280), label)
 BROLL = [
-    ("36109.mp4", 4.0, g1(2.15), g1(4.75), 0.60, None),
+    ("24945.mp4", 0.5, g1(2.15), g1(4.75), 0.55, None),
     ("17051.mp4", 1.9, g2(1.75), g2(3.05), 0.55, "Return-to-Work Letter"),
     ("49970.mp4", 0.2, g3(14.0), g3(16.6), 0.50, None),
     ("33357.mp4", 1.0, g3(18.4), g3(21.0), 0.50, "Explore your options"),
@@ -64,7 +66,7 @@ CHAPTERS = [(0, B2, "MORTGAGE ON MATERNITY LEAVE"), (B2, B3, "WHAT YOU NEED"),
             (B3, g3(13.87), "HOW LENDERS DECIDE"), (g3(13.87), SPEECH_END, "MY ADVICE")]
 
 # A-roll zoom keyframes (start, end, zoom). Default gentle push.
-PUNCH = [(g1(5.2), g1(7.05), 1.20), (g1(7.05), g1(10.2), 1.08), (g3(5.6), g3(7.95), 1.12), (g2(0.0), g2(1.75), 1.10), (g2(3.05), g2(8.2), 1.0),
+PUNCH = [(g1(5.2), g1(7.05), 1.20), (g1(7.05), g1(10.2), 1.08), (g3(5.6), g3(7.95), 1.12), (g2(0.0), g2(1.75), 1.10), (g2(3.05), g2(CUT2[0]), 1.0), (g2(CUT2[1]), g2(8.2), 1.08),
          (g3(2.9), g3(5.6), 1.0), (g3(7.95), g3(CUT3[0]), 1.0), (g3(CUT3[1]), g3(13.87), 1.08), (g3(16.6), g3(18.4), 1.14),
          (g3(21.0), SPEECH_END + 10, 1.12)]
 
@@ -254,15 +256,16 @@ def reader(cmd, w, h):
     p.wait()
 
 def build_aroll():
-    vf = ("[0:v]trim={0}:{1},setpts=PTS-STARTPTS[a];[1:v]trim={2}:{3},setpts=PTS-STARTPTS[b];"
-          "[2:v]trim={4}:{5},setpts=PTS-STARTPTS[c];[2:v]trim={6}:{7},setpts=PTS-STARTPTS[d];[a][b][c][d]concat=n=4:v=1:a=0,fps=30,"
+    vf = ("[0:v]trim={0}:{1},setpts=PTS-STARTPTS[a];[1:v]trim={2}:{9},setpts=PTS-STARTPTS[b];[1:v]trim={10}:{3},setpts=PTS-STARTPTS[b2];"
+          "[2:v]trim={4}:{5},setpts=PTS-STARTPTS[c];[2:v]trim={6}:{7},setpts=PTS-STARTPTS[d];[a][b][b2][c][d]concat=n=5:v=1:a=0,fps=30,"
           "scale=1080:1920:flags=lanczos,eq=contrast=1.06:saturation=1.12:brightness=0.01,"
-          "unsharp=5:5:0.6,tpad=stop_mode=clone:stop_duration={8}[v]").format(*C1, *C2, C3[0], CUT3[0], CUT3[1], C3[1], END_CARD + 1)
-    af = ("[0:a]atrim={0}:{1},asetpts=PTS-STARTPTS[a];[1:a]atrim={2}:{3},asetpts=PTS-STARTPTS[b];"
+          "unsharp=5:5:0.6,tpad=stop_mode=clone:stop_duration={8}[v]").format(*C1, *C2, C3[0], CUT3[0], CUT3[1], C3[1], END_CARD + 1, *CUT2)
+    af = ("[0:a]atrim={0}:{1},asetpts=PTS-STARTPTS[a];[1:a]atrim={2}:{9},asetpts=PTS-STARTPTS,afade=t=out:st={11}:d=0.006[b];"
+          "[1:a]atrim={10}:{3},asetpts=PTS-STARTPTS,afade=t=in:d=0.006[b2];"
           "[2:a]atrim={4}:{5},asetpts=PTS-STARTPTS,afade=t=out:st={8}:d=0.006[c];"
-          "[2:a]atrim={6}:{7},asetpts=PTS-STARTPTS,afade=t=in:d=0.006[d];[a][b][c][d]concat=n=4:v=0:a=1,"
+          "[2:a]atrim={6}:{7},asetpts=PTS-STARTPTS,afade=t=in:d=0.006[d];[a][b][b2][c][d]concat=n=5:v=0:a=1,"
           "highpass=f=80,afftdn=nf=-25,acompressor=threshold=-20dB:ratio=3:attack=5:release=80,"
-          "loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000[s]").format(*C1, *C2, C3[0], CUT3[0], CUT3[1], C3[1], CUT3[0] - C3[0] - 0.006)
+          "loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000[s]").format(*C1, *C2, C3[0], CUT3[0], CUT3[1], C3[1], CUT3[0] - C3[0] - 0.006, CUT2[0], CUT2[1], CUT2[0] - C2[0] - 0.006)
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", f"{SRC}/c1.mov", "-i", f"{SRC}/c2.mov", "-i", f"{SRC}/c3.mov",
                     "-filter_complex", vf + ";" + af, "-map", "[v]", "-c:v", "libx264", "-crf", "10", "-preset", "fast",
                     "-pix_fmt", "yuv420p", f"{OUT}/aroll.mp4", "-map", "[s]", "-ac", "2", f"{OUT}/speech.wav"], check=True)
@@ -290,7 +293,7 @@ def main():
     ImageDraw.Draw(card_border).rounded_rectangle([0, 0, CARD_W + 15, CARD_H + 15], 54, fill=(255, 255, 255, 255))
     card_border = shadowed(card_border, blur=26, off=(0, 16), alpha=150)
 
-    CL1 = ("Your letter should show", ["Return date", "Position", "Salary"], g2(3.05), g2(8.2), [g2(4.5), g2(5.9), g2(6.85)])
+    CL1 = ("Your letter should show", ["Return date", "Position", "Salary"], g2(3.05), g2(8.2), [g2(4.5), g2(6.3), g2(6.85)])
     CL2 = ("Lenders also check", ["Credit history", "Existing debts", "Financial situation"], g3(7.95), g3(13.87), [g3(8.6), g3(9.8), g3(10.9)])
     CMP = (g3(2.9), g3(5.55))
     YES_T = (g1(5.25), g1(7.05))
@@ -398,7 +401,7 @@ def main():
         enc.stdin.write(L.convert("RGB").tobytes())
         if n % 150 == 0: print(f"frame {n}/{N}", flush=True)
     enc.stdin.close(); enc.wait()
-    json.dump({"TOTAL": TOTAL, "SPEECH_END": SPEECH_END, "O2": O2, "O3": O3, "CUT3": CUT3, "CUTLEN": CUTLEN, "B2": B2, "B3": B3,
+    json.dump({"TOTAL": TOTAL, "SPEECH_END": SPEECH_END, "O2": O2, "O3": O3, "CUT3": CUT3, "CUTLEN": CUTLEN, "CUT2": CUT2, "CUTLEN2": CUTLEN2, "B2": B2, "B3": B3,
                "BROLL": [b[2] for b in BROLL]}, open(f"{OUT}/timeline.json", "w"))
 
 if __name__ == "__main__":
