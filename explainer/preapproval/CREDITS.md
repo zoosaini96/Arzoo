@@ -24,7 +24,5 @@ Motion graphics, icons and captions are drawn programmatically (Inter and Noto S
 ## Rebuild
 Workspace layout: `src/c1..c4.mov`, `dl/broll`, `dl/music`, `dl/sfx` next to `edit/`. Run `clean.py`, then `build.py`, then `mix.py`.
 
-## Speech edit
-In clip 1 the spoken order "sab ton ik zaruri step" is changed to "ik sab ton zaruri step" by swapping
-4.30–4.62 s ("sab ton") and 4.62–4.845 s ("ik") of the source audio (4 ms crossfades, total length unchanged).
-This happens under the aerial B-roll, so lip sync is not visible. Clip 1 captions are English translations of the Punjabi.
+## Speech
+All speech is the speaker's original recording, unedited. Clip 1 is in Punjabi; its captions are English translations.

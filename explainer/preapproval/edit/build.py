@@ -149,28 +149,7 @@ def endcard_img2():
     return im
 
 # ---------------- sources ----------------
-# clip 1 word swap: she says "sab ton | ik | zaruri step"; the edit plays "ik | sab ton | zaruri step".
-# boundaries (s) were picked at energy minima of the source audio.
-SWAP1 = (4.30, 4.62, 4.845)   # [a,b) = "sab ton", [b,c) = "ik" (she runs "ton ik" together; split verified by ASR)
-def fix_c1_audio():
-    import wave
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", f"{SRC}/c1.mov", "-vn", "-ac", "2", "-ar", "48000", "-c:a", "pcm_s16le", f"{OUT}/c1_audio_src.wav"], check=True)
-    w = wave.open(f"{OUT}/c1_audio_src.wav"); sr = w.getframerate()
-    x = np.frombuffer(w.readframes(w.getnframes()), np.int16).reshape(-1, 2).astype(np.float32)
-    a, b, c = (int(round(v * sr)) for v in SWAP1)
-    pieces = [x[:a], x[b:c], x[a:b], x[c:]]
-    fl = int(0.004 * sr); ramp = np.linspace(0, 1, fl)[:, None]
-    for k, pc in enumerate(pieces):       # 4 ms fade at each joint, length unchanged
-        pc = pc.copy()
-        if k > 0: pc[:fl] *= ramp
-        if k < len(pieces) - 1: pc[-fl:] *= ramp[::-1]
-        pieces[k] = pc
-    y = np.clip(np.concatenate(pieces), -32768, 32767).astype(np.int16)
-    assert len(y) == len(x)
-    o = wave.open(f"{OUT}/c1_audio_fixed.wav", "wb"); o.setnchannels(2); o.setsampwidth(2); o.setframerate(sr); o.writeframes(y.tobytes()); o.close()
-
 def build_aroll():
-    fix_c1_audio()
     vf, af, n = [], [], 0
     for k, (c, a, b) in enumerate(SEGS):
         vf.append(f"[{c-1}:v]trim={a}:{b},setpts=PTS-STARTPTS,fps=30[v{k}]")
@@ -180,7 +159,7 @@ def build_aroll():
               "acompressor=threshold=-20dB:ratio=3:attack=5:release=80,loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000[s]")
     ins = []
     for c in (1, 2, 3, 4): ins += ["-i", f"{OUT}/c{c}_clean.mp4"]
-    for c in (1, 2, 3, 4): ins += ["-i", f"{OUT}/c1_audio_fixed.wav" if c == 1 else f"{SRC}/c{c}.mov"]
+    for c in (1, 2, 3, 4): ins += ["-i", f"{SRC}/c{c}.mov"]
     subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(vf + af),
                     "-map", "[v]", "-c:v", "libx264", "-crf", "10", "-preset", "fast", "-pix_fmt", "yuv420p", f"{OUT}/aroll.mp4",
                     "-map", "[s]", "-ac", "2", f"{OUT}/speech.wav"], check=True)
