@@ -1,8 +1,9 @@
 # Mortgage pre-approval explainer: edit notes and credits
 
-**Output:** `mortgage-preapproval-explainer.mp4` is 1080x1920 (9:16), 30 fps, 37.6 s, H.264/AAC, about -15 LUFS.
+**Output:** `mortgage-preapproval-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.3 s, H.264/AAC, about -15 LUFS.
 
-The four uploaded clips are joined in the order they were provided: intro (hook), reason 1 and 2, reason 3, "but remember".
+The four uploaded clips are joined in the order they were provided and used in full: no speech is cut.
+Clips 2-4 are iPhone HDR (HLG, BT.2020); they are tone-mapped to SDR BT.709 (mobius) so their colour matches clip 1.
 
 ## Background clean-up (`edit/clean.py`)
 Removed from every shot: the wooden pallets and the black polythene bag on the left, the grey plastic box on the grass,

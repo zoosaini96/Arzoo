@@ -14,10 +14,8 @@ CORAL = (255, 107, 107); GREY = (160, 170, 185)
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "helpers_src.py")).read())
 
 # ---------------- timeline: (clip, src_in, src_out) in upload order ----------------
-SEGS = [(1, 0.00, 1.95), (1, 2.85, 6.85), (1, 7.55, 9.70),
-        (2, 0.00, 7.20), (2, 8.15, 13.35),
-        (3, 0.00, 5.84),
-        (4, 0.00, 8.26)]
+# every clip is used in full, start to end, so no speech is cut
+SEGS = [(1, 0.0, 9.82), (2, 0.0, 14.40), (3, 0.0, 5.83), (4, 0.0, 8.25)]
 GST = []; acc = 0.0
 for s in SEGS: GST.append(acc); acc += s[2] - s[1]
 SPEECH_END = acc; END_CARD = 3.0; TOTAL = SPEECH_END + END_CARD; N = int(round(TOTAL * FPS))
@@ -34,52 +32,52 @@ def clip_at(t):
 CUTS = GST[1:]
 
 CAPS = [
-    (1, 0.00, 1.95, "Making plans for your *dream home*?"),
-    (1, 2.85, 4.70, "There's *one important step*"),
-    (1, 4.70, 6.85, "that many *buyers ignore*..."),
-    (1, 7.55, 9.70, "That's *mortgage pre-approval!*"),
+    (1, 0.45, 2.94, "Making plans for your *dream home*?"),
+    (1, 3.24, 5.30, "There's *one important step*"),
+    (1, 5.30, 7.39, "that many *buyers ignore*..."),
+    (1, 7.70, 9.82, "That's *mortgage pre-approval!*"),
     (2, 0.00, 1.56, "*Pre-approval* gives you"),
     (2, 1.56, 3.06, "a clear idea of your"),
     (2, 3.06, 4.24, "*income*, *debts*"),
     (2, 4.24, 5.06, "and *credit profile*"),
-    (2, 5.06, 7.20, "for *mortgage qualification*."),
-    (2, 8.15, 9.58, "*Second*, you get"),
+    (2, 5.06, 7.40, "for *mortgage qualification*."),
+    (2, 8.20, 9.58, "*Second*, you get"),
     (2, 9.58, 10.80, "a *realistic budget*"),
-    (2, 10.80, 13.35, "and can *research confidently*."),
+    (2, 10.80, 14.40, "and can *research confidently*."),
     (3, 0.00, 1.38, "*Third*,"),
     (3, 1.38, 2.90, "*sellers* feel confident"),
     (3, 2.90, 4.60, "you're *financially prepared*"),
-    (3, 4.60, 5.84, "to *buy their home*."),
+    (3, 4.60, 5.83, "to *buy their home*."),
     (4, 0.00, 1.30, "But *remember*,"),
     (4, 1.30, 2.60, "*pre-approval* is *NOT*"),
-    (4, 2.60, 4.00, "your *final mortgage approval*."),
-    (4, 4.00, 5.60, "*Final approval* depends on"),
+    (4, 2.60, 4.30, "your *final mortgage approval*."),
+    (4, 4.30, 5.60, "*Final approval* depends on"),
     (4, 5.60, 6.60, "*lender policies*"),
-    (4, 6.60, 8.26, "and *property eligibility*."),
+    (4, 6.60, 8.25, "and *property eligibility*."),
 ]
 CAPS = [(g(c, a), g(c, b), t) for c, a, b, t in CAPS]
 
 # B-roll: (file, src_start, t0, t1, crop_center_x (0-1), label)
 BROLL = [
-    ("24945.mp4", 0.5, g(1, 2.95), g(1, 6.85), 0.50, None),
+    ("24945.mp4", 0.5, g(1, 3.10), g(1, 7.40), 0.50, None),
     ("46994.mp4", 9.0, g(2, 9.45), g(2, 10.80), 0.70, "Realistic budget"),
-    ("4713.mp4", 2.0, g(2, 10.80), g(2, 13.30), 0.58, "Shop with confidence"),
+    ("4713.mp4", 2.0, g(2, 10.80), g(2, 13.60), 0.58, "Shop with confidence"),
     ("12946.mp4", 5.5, g(3, 1.40), g(3, 4.50), 0.62, "Sellers take you seriously"),
-    ("6021.mp4", 0.3, g(4, 4.00), g(4, 5.55), 0.45, None),
+    ("6021.mp4", 0.3, g(4, 4.30), g(4, 5.55), 0.45, None),
 ]
 CARD_W, CARD_H, CARD_CY = 940, 1175, 860
-CHAPTERS = [(0, GST[3], "THE STEP BUYERS SKIP"), (GST[3], GST[6], "WHY GET PRE-APPROVED"), (GST[6], SPEECH_END, "KEEP IN MIND")]
+CHAPTERS = [(0, GST[1], "THE STEP BUYERS SKIP"), (GST[1], GST[3], "WHY GET PRE-APPROVED"), (GST[3], SPEECH_END, "KEEP IN MIND")]
 # numbered reason badges (t0, t1, n, text)
-REASONS = [(g(2, 0.0), g(2, 7.2), "1", "Know what you qualify for"),
-           (g(2, 8.15), g(2, 13.35), "2", "Get a realistic budget"),
-           (g(3, 0.0), g(3, 5.84), "3", "Sellers trust your offer")]
+REASONS = [(g(2, 0.0), g(2, 8.0), "1", "Know what you qualify for"),
+           (g(2, 8.0), g(2, 14.4), "2", "Get a realistic budget"),
+           (g(3, 0.0), g(3, 5.83), "3", "Sellers trust your offer")]
 
 # reframing: crop centre x per clip (1080 space) - also crops away the far edges of the yard
 CX = {1: 548, 2: 552, 3: 532, 4: 566}
 BASEZ = 1.2
-PUNCH = [(g(1, 7.55), g(1, 9.70), 1.55), (g(2, 3.06), g(2, 7.20), 1.38), (g(2, 8.15), g(2, 9.45), 1.5),
+PUNCH = [(g(1, 7.70), g(1, 9.82), 1.55), (g(2, 3.06), g(2, 7.40), 1.38), (g(2, 8.20), g(2, 9.45), 1.5),
          (g(3, 0.0), g(3, 1.40), 1.5), (g(3, 4.5), g(3, 5.84), 1.35), (g(4, 0.0), g(4, 1.3), 1.5),
-         (g(4, 1.3), g(4, 4.0), 1.3), (g(4, 5.55), SPEECH_END + 10, 1.25)]
+         (g(4, 1.3), g(4, 4.3), 1.3), (g(4, 5.55), SPEECH_END + 10, 1.25)]
 def zoom_at(t):
     for a, b, z in PUNCH:
         if a <= t < b: return z
@@ -183,9 +181,9 @@ def main():
     card_border = Image.new("RGBA", (CARD_W + 16, CARD_H + 16), (0, 0, 0, 0))
     ImageDraw.Draw(card_border).rounded_rectangle([0, 0, CARD_W + 15, CARD_H + 15], 54, fill=(255, 255, 255, 255))
     card_border = shadowed(card_border, blur=26, off=(0, 16), alpha=150)
-    CL1 = ("What lenders review", ["Income", "Debts", "Credit profile"], g(2, 2.9), g(2, 7.2), [g(2, 3.06), g(2, 3.62), g(2, 4.24)])
+    CL1 = ("What lenders review", ["Income", "Debts", "Credit profile"], g(2, 2.9), g(2, 7.4), [g(2, 3.06), g(2, 3.62), g(2, 4.24)])
     CL2 = ("Final approval depends on", ["Lender policies", "Property eligibility"], g(4, 5.55), SPEECH_END, [g(4, 5.62), g(4, 6.86)])
-    NEQ = (g(4, 1.3), g(4, 4.0)); TITLE_T = (0.05, g(1, 1.95)); STAMP_T = (g(1, 7.55), g(1, 9.70))
+    NEQ = (g(4, 1.3), g(4, 4.3)); TITLE_T = (0.05, g(1, 2.95)); STAMP_T = (g(1, 7.70), g(1, 9.82))
     enc = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS),
                             "-i", "-", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", f"{OUT}/video_noaudio.mp4"], stdin=subprocess.PIPE)
     br_iters, last_br, end_bg, last_frame = {}, {}, None, None
