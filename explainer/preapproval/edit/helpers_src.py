@@ -44,7 +44,7 @@ def house_icon(d, cx, cy, s, col):
 def text_w(font, s): return font.getlength(s)
 
 def caption_img(text):
-    font = F("ExtraBold", 66)
+    font = GUR(70) if any("\u0a00" <= ch <= "\u0a7f" for ch in text) else F("ExtraBold", 66)
     parts = []  # (word, highlight)
     hl = False
     for tok in text.replace("*", " * ").split():

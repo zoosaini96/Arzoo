@@ -19,7 +19,7 @@ Music: "Happy Home" (Mixkit track 801).
 
 Sound effects (Mixkit SFX IDs): 3005, 166, 1490, 2870, 2869, 2354, 2357, 938.
 
-Motion graphics, icons and captions are drawn programmatically (Inter font, SIL Open Font License).
+Motion graphics, icons and captions are drawn programmatically (Inter and Noto Sans Gurmukhi fonts, SIL Open Font License).
 
 ## Rebuild
 Workspace layout: `src/c1..c4.mov`, `dl/broll`, `dl/music`, `dl/sfx` next to `edit/`. Run `clean.py`, then `build.py`, then `mix.py`.

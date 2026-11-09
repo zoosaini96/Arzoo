@@ -11,6 +11,12 @@ FONT = "/usr/share/fonts/opentype/inter/"
 def F(w, s): return ImageFont.truetype(FONT + f"Inter-{w}.otf", s)
 NAVY = (11, 37, 69); AMBER = (255, 183, 3); GREEN = (46, 196, 140); WHITE = (255, 255, 255)
 CORAL = (255, 107, 107); GREY = (160, 170, 185)
+def GUR(s):
+    """Noto Sans Gurmukhi (SIL OFL), bold weight, for Punjabi captions."""
+    f = ImageFont.truetype(os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "NotoSansGurmukhi-VF.ttf"), s, layout_engine=ImageFont.Layout.RAQM)
+    try: f.set_variation_by_axes([800, 100])
+    except Exception: f.set_variation_by_name("Bold")
+    return f
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "helpers_src.py")).read())
 
 # ---------------- timeline: (clip, src_in, src_out) in upload order ----------------
@@ -33,7 +39,7 @@ CUTS = GST[1:]
 
 CAPS = [
     (1, 0.45, 2.94, "Making plans for your *dream home*?"),
-    (1, 3.24, 5.30, "There's *one important step*"),
+    (1, 3.24, 5.30, "ਇੱਕ *ਸਭ ਤੋਂ ਜ਼ਰੂਰੀ* ਸਟੈਪ"),
     (1, 5.30, 7.39, "that many *buyers ignore*..."),
     (1, 7.70, 9.82, "That's *mortgage pre-approval!*"),
     (2, 0.00, 1.56, "*Pre-approval* gives you"),
