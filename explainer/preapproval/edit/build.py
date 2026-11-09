@@ -81,6 +81,9 @@ REASONS = [(g(2, 0.0), g(2, 8.0), "1", "Know what you qualify for"),
 
 # reframing: crop centre x per clip (1080 space) - also crops away the far edges of the yard
 CX = {1: 548, 2: 552, 3: 532, 4: 566}
+# highest point of the speaker's head in each cleaned clip (1080x1920 source px), measured over the clip
+HEADTOP = {1: 520, 2: 315, 3: 365, 4: 300}
+HEAD_CLEAR = 265   # output px kept free above the head for the chapter pill and reason badges
 BASEZ = 1.2
 PUNCH = [(g(1, 7.70), g(1, 9.82), 1.55), (g(2, 3.06), g(2, 7.40), 1.38), (g(2, 8.20), g(2, 9.45), 1.5),
          (g(3, 0.0), g(3, 1.40), 1.5), (g(3, 4.5), g(3, 5.84), 1.35), (g(4, 0.0), g(4, 1.3), 1.5),
@@ -226,7 +229,9 @@ def main():
         else: z = PUNCH[-1][2]; c = 4
         cx = CX[c]; cy = 960 - max(0, z - BASEZ) * 600
         w2, h2 = W / z, H / z
-        x0 = min(max(0, cx - w2 / 2), W - w2); y0 = min(max(0, cy - h2 / 2), H - h2)
+        x0 = min(max(0, cx - w2 / 2), W - w2); y0 = cy - h2 / 2
+        y0 = min(y0, HEADTOP[c] - HEAD_CLEAR / z)          # keep the head below the top badges
+        y0 = min(max(0, y0), H - h2)
         img = img.resize((W, H), Image.BICUBIC, box=(x0, y0, x0 + w2, y0 + h2)).convert("RGBA")
         # ---- B-roll card
         for i, b in enumerate(BROLL):
@@ -263,7 +268,7 @@ def main():
         for k, (a0, a1, _, _) in enumerate(REASONS):
             if a0 <= t < a1:
                 p, al = fade(t, a0, a1, 0.4, 0.2)
-                paste(L, badges[k], W/2 + 120 * (1 - ease_out(p)), 205, 1.0, al)
+                paste(L, badges[k], W/2 + 120 * (1 - ease_out(p)), 170, 1.0, al)
         # ---- checklists
         for title, items, a0, a1, tms in (CL1, CL2):
             if a0 <= t < a1:
