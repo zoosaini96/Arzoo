@@ -33,8 +33,9 @@ HDR = {2, 3, 4}
 def frames(i):
     vf = f"scale={W}:{H}:flags=lanczos"
     if i in HDR:  # iPhone HLG/BT.2020 -> SDR BT.709 (without this the clips look grey and washed out)
-        vf = ("zscale=t=linear:npl=203,format=gbrpf32le,zscale=p=bt709,tonemap=mobius:param=0.5:desat=0,"
-              "zscale=t=bt709:m=bt709:r=tv,format=yuv420p,eq=saturation=1.15:contrast=1.05," + vf)
+        # hable keeps skin tones natural; brightness/saturation matched to the SDR first clip
+        vf = ("zscale=t=linear:npl=300,format=gbrpf32le,zscale=p=bt709,tonemap=hable:desat=0,"
+              "zscale=t=bt709:m=bt709:r=tv,format=yuv420p,eq=contrast=1.04:saturation=0.95:gamma=1.08," + vf)
     p = subprocess.Popen(["ffmpeg", "-v", "error", "-i", f"{SRC}/c{i}.mov", "-vf", vf,
                           "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], stdout=subprocess.PIPE, bufsize=W*H*3*2)
     while True:
