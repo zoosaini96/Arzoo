@@ -81,9 +81,6 @@ REASONS = [(g(2, 0.0), g(2, 8.0), "1", "Know what you qualify for"),
 
 # reframing: crop centre x per clip (1080 space) - also crops away the far edges of the yard
 CX = {1: 548, 2: 552, 3: 532, 4: 566}
-# highest point of the speaker's head in each cleaned clip (1080x1920 source px), measured over the clip
-HEADTOP = {1: 520, 2: 315, 3: 365, 4: 300}
-HEAD_CLEAR = 265   # output px kept free above the head for the chapter pill and reason badges
 BASEZ = 1.2
 PUNCH = [(g(1, 7.70), g(1, 9.82), 1.55), (g(2, 3.06), g(2, 7.40), 1.38), (g(2, 8.20), g(2, 9.45), 1.5),
          (g(3, 0.0), g(3, 1.40), 1.5), (g(3, 4.5), g(3, 5.84), 1.35), (g(4, 0.0), g(4, 1.3), 1.5),
@@ -96,11 +93,11 @@ def zoom_at(t):
     return BASEZ
 
 def badge_img(n, text):
-    font = F("ExtraBold", 44); tw = int(text_w(font, text)); h = 96
-    im = rrect((tw + 150, h), h // 2, (255, 255, 255, 245)); d = ImageDraw.Draw(im)
-    d.ellipse([10, 10, h - 10, h - 10], fill=AMBER)
-    d.text((h / 2, h / 2), n, font=F("Black", 48), fill=NAVY, anchor="mm")
-    d.text((h + 20, h / 2), text, font=font, fill=NAVY, anchor="lm")
+    font = F("ExtraBold", 38); tw = int(text_w(font, text)); h = 78
+    im = rrect((tw + h + 50, h), h // 2, (255, 255, 255, 245)); d = ImageDraw.Draw(im)
+    d.ellipse([8, 8, h - 8, h - 8], fill=AMBER)
+    d.text((h / 2, h / 2), n, font=F("Black", 40), fill=NAVY, anchor="mm")
+    d.text((h + 16, h / 2), text, font=font, fill=NAVY, anchor="lm")
     return shadowed(im, blur=14, off=(0, 8), alpha=120)
 
 def stamp_img():
@@ -229,9 +226,7 @@ def main():
         else: z = PUNCH[-1][2]; c = 4
         cx = CX[c]; cy = 960 - max(0, z - BASEZ) * 600
         w2, h2 = W / z, H / z
-        x0 = min(max(0, cx - w2 / 2), W - w2); y0 = cy - h2 / 2
-        y0 = min(y0, HEADTOP[c] - HEAD_CLEAR / z)          # keep the head below the top badges
-        y0 = min(max(0, y0), H - h2)
+        x0 = min(max(0, cx - w2 / 2), W - w2); y0 = min(max(0, cy - h2 / 2), H - h2)
         img = img.resize((W, H), Image.BICUBIC, box=(x0, y0, x0 + w2, y0 + h2)).convert("RGBA")
         # ---- B-roll card
         for i, b in enumerate(BROLL):
@@ -268,7 +263,7 @@ def main():
         for k, (a0, a1, _, _) in enumerate(REASONS):
             if a0 <= t < a1:
                 p, al = fade(t, a0, a1, 0.4, 0.2)
-                paste(L, badges[k], W/2 + 120 * (1 - ease_out(p)), 170, 1.0, al)
+                paste(L, badges[k], 28 + badges[k].width / 2 - 80 * (1 - ease_out(p)), 86, 1.0, al)
         # ---- checklists
         for title, items, a0, a1, tms in (CL1, CL2):
             if a0 <= t < a1:
@@ -286,8 +281,9 @@ def main():
                 if c0 <= t < c1_:
                     p = (t - c0) / 0.15
                     paste(L, cap_cache[i], W/2, 1640, 0.88 + 0.12 * ease_out(p), min(1, ease_out(p * 1.5)))
+            badge_on = any(a0 <= t < a1 for a0, a1, _, _ in REASONS)
             for c0, c1_, txt in CHAPTERS:
-                if c0 <= t < c1_:
+                if c0 <= t < c1_ and not badge_on:
                     p = (t - c0) / 0.35; im = chap[txt]
                     paste(L, im, 40 + im.width/2 - 60 * (1 - ease_out(p)), 82, 1.0, ease_out(p))
         # ---- end card
