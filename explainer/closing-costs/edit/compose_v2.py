@@ -20,7 +20,7 @@ INK = (30, 43, 39); MUTED = (98, 112, 104)
 
 # ------------------------------------------------------------------ timeline (same cut as style 1)
 SEGS = [(1, 0.00, 5.95), (1, 6.62, 11.30), (2, 0.00, 4.76), (3, 0.25, 9.20),
-        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.65)]
+        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.80)]
 OUTRO = 2.4
 offs = []; t = 0
 for c, a, b in SEGS: offs.append(t); t += b - a
@@ -42,7 +42,7 @@ CAP = [
  (5, 0.03, 1.98, "Check with your *mortgage professional*"), (5, 1.98, 3.00, "or *lawyer*"),
  (5, 3.00, 5.22, "and confirm your *estimated* closing costs"),
  (6, 0.00, 1.52, "Got any questions"), (6, 1.52, 3.52, "about *closing costs?*"),
- (6, 3.52, 5.07, "Feel free to *reach out to me*"),
+ (6, 3.52, 5.24, "Feel free to *reach out to me*"),
 ]
 CAPS = [(T(s, a), T(s, b), txt) for s, a, b, txt in CAP]
 
@@ -72,7 +72,7 @@ for _, s in RECEIPT: sfx(T(3, s), "1125", 0.75)
 sfx(T(3, 8.55), "1120", 0.6)
 sfx(T(4, 2.75), "2995", 0.6)
 sfx(T(6, 0.25), "2354", 0.45)
-sfx(T(6, 5.12), "938", 0.35)
+sfx(T(6, 5.28), "938", 0.35)
 sfx(VOICE_END - 0.05, "1490", 0.35)
 
 # ------------------------------------------------------------------ helpers
@@ -267,6 +267,18 @@ def plate(txt, f, col):
     ImageDraw.Draw(im).rounded_rectangle((0, 0, im.width - 1, im.height - 1), 22, fill=CREAM + (246,))
     im.alpha_composite(ti, (45, 8)); return with_shadow(im)
 
+def hook_card():
+    im = Image.new("RGBA", (960, 380), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+    d.rounded_rectangle((0, 0, 959, 379), 22, fill=CREAM + (250,))
+    lab = "FIRST-TIME HOME BUYERS"; f = manrope("ExtraBold", 32)
+    lw = d.textlength(lab, font=f) + 44
+    d.rounded_rectangle((480 - lw / 2, 34, 480 + lw / 2, 88), 27, fill=FOREST)
+    d.text((480, 61), lab, font=f, fill=(252, 228, 160), anchor="mm")
+    d.text((480, 170), "Saved your down payment?", font=garamond("Bold", 84), fill=FOREST, anchor="mm")
+    d.text((480, 278), "You're not done yet.", font=garamond("Italic", 100), fill=TERRA, anchor="mm")
+    d.line([(300, 336), (660, 332)], fill=TERRA, width=5)
+    return with_shadow(im)
+
 def lower_title():
     im = Image.new("RGBA", (880, 270), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     d.rounded_rectangle((0, 0, 879, 269), 18, fill=CREAM + (248,))
@@ -345,15 +357,10 @@ def render(fi):
 
 def overlays(canvas, t, si):
     if si == 0:
-        k = t - 0.1
-        l1 = cached("h1", lambda: text_img("BEFORE YOU BUY A HOME", manrope("ExtraBold", 34), (252, 228, 160)))
-        l2 = cached("h2", lambda: text_img("the cost nobody mentions", garamond("Italic", 92), CREAM))
-        paste(canvas, l1, 540, 170 - 20 * (1 - ease_out(k / 0.4)), alpha=ease_out(k / 0.35))
-        paste(canvas, l2, 540, 240 - 20 * (1 - ease_out((k - 0.12) / 0.4)), alpha=ease_out((k - 0.12) / 0.35))
-        # underline drawing itself
-        p = ease_in_out((k - 0.45) / 0.6)
-        if p > 0:
-            d = ImageDraw.Draw(canvas); x0 = 540 - 330; d.line([(x0, 300), (x0 + 660 * p, 296)], fill=TERRA, width=7)
+        if t < T(0, 3.98) + 0.2:
+            k = t; out = ease_in_out((t - T(0, 3.85)) / 0.3) if t > T(0, 3.85) else 0
+            paste(canvas, cached("hook", hook_card), 540 - 1100 * out, 1110,
+                  scale=0.97 + 0.03 * back(k / 0.35))  # fully visible on frame 1 (thumbnail)
         k = t - T(0, 1.25)
         if k >= 0 and t < T(0, 3.9):
             paste(canvas, cached("st_dp", lambda: sticky(["Down payment", "saved", "check"], rot=5)), 820, 760,
@@ -369,9 +376,9 @@ def overlays(canvas, t, si):
             paste(canvas, lt_, 540 - 900 * (1 - ease_out(k / 0.45)), 1150)
     if si == 6:
         k = t - T(6, 0.25)
-        if k >= 0 and t < T(6, 5.07):
+        if k >= 0 and t < T(6, 5.24):
             paste(canvas, cached("cta", cta_card), 540, 1150 + 700 * (1 - ease_out(k / 0.45)))
-        k = t - T(6, 5.07)
+        k = t - T(6, 5.24)
         if k >= 0:
             paste(canvas, cached("ty", lambda: plate("Thank you!", garamond("Italic", 130), FOREST)), 540, 1150,
                   scale=0.9 + 0.1 * ease_out(k / 0.3), alpha=ease_out(k / 0.2))

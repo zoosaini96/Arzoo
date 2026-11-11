@@ -7,8 +7,8 @@ while True:
     if not ok: break
     fr.append(f)
 newlen=sf.info("work/c6_fixed.wav").duration
-A0,A1=4.445,4.870                        # source span whose words were re-ordered
-N1=4.445+(4.870-4.590)+(4.168-4.055)+(4.578-4.445)+0.07   # its end in the new audio
+A0,A1=4.445,4.865                        # source span whose words were re-ordered
+N1=newlen-(len(fr)/30-A1)                # its end in the new audio (tail is unchanged)
 def src(u):
     if u<A0: return u
     if u<N1: return A0+(u-A0)*(A1-A0)/(N1-A0)

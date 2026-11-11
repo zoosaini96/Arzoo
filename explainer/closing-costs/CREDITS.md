@@ -1,15 +1,24 @@
 # Closing-costs explainer: edit notes and credits
 
-**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.2 s, H.264/AAC, -14 LUFS.
+**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.4 s, H.264/AAC, -14 LUFS.
 
 The six source clips are joined in upload order. Clip 1 ends with the line "down payment to ilava... closing costs kehnde han",
 and clip 2 is a retake of that same line, so clip 1's copy (11.6–16.3 s) is dropped and clip 2's take is used.
 The silent pause between the hook and "Wait..." in clip 1 (5.95–6.62 s) is also removed.
 
 ## Speech edit
-In clip 6, "please feel free to reach me out" is re-ordered to "please feel free to reach out to me" using her own words:
-"out" (4.590–4.870 s), then "to" (4.055–4.168 s, the "to" from "free to"), then "me" (4.445–4.578 s), then a 70 ms pause before
-"thank you" (`edit/splice6.py`). The video over that 0.6 s span is gently slowed to stay in sync (`edit/warp6.py`).
+In clip 6, "please feel free to reach me out" is re-ordered to "please feel free to reach out to me" (`edit/splice6_v2.py`):
+- "out" is clip 6, 4.615–4.865 s (starting after the "me" glide).
+- "to" is taken from clip 1 ("you need **to** budget", 8.555–8.705 s), because it has a crisp "t" and a full vowel.
+- "me" is clip 6, 4.445–4.572 s, with its vowel lengthened (pitch kept) so it sounds phrase-final.
+- The pieces are loudness-matched, with short natural pauses, before "thank you".
+
+The video over that span is gently slowed to stay in sync (`edit/warp6.py`).
+The whole voice track also gets light noise reduction and a presence boost for clearer consonants, and the music sits further under it.
+
+## Hook
+The first ~4 s show a hook card aimed at clients: "FIRST-TIME HOME BUYERS / Saved your down payment? / *You're not done yet.*"
+It is fully visible on the first frame, so it also works as the thumbnail.
 
 ## Clean-up on the presenter footage
 - **House number "1105" removed** on every frame. The digits are detected per frame (handheld camera, so the position drifts),
@@ -34,7 +43,7 @@ Only items marked with Mixkit's *Free* licence were used (no "Restricted" items)
 B-roll (mixkit.co video IDs): 4009 (houses under a blue sky), 18263 (counting coins), 1717715134 (writing a list in a notebook),
 4809 (business meeting), 241 (signing a contract).
 
-Music: "Raising Me Higher" by Ahjay Stelino (Mixkit track 34, Mixkit Stock Music Free License). It sits about 9 dB under the voice and rises in pauses and the outro.
+Music: "Raising Me Higher" by Ahjay Stelino (Mixkit track 34, Mixkit Stock Music Free License). It sits well under the voice and rises in pauses and the outro.
 
 Sound effects (Mixkit SFX IDs): 1133 camera shutter, 1125 typewriter soft click, 2995 stapling paper, 1490 fast whoosh, 1492 cinematic fast whoosh, 1489 air woosh, 2903 movie whoosh impact,
 2354 message pop, 2357 bubble pop, 1993 clinking coins, 1120 box-check click, 938 uplifting bells.
@@ -45,7 +54,7 @@ programmatically (EB Garamond, Manrope and DM Mono fonts, SIL Open Font License)
 ## Rebuild
 1. `edit/process_clips.py N` removes the house number and recolours the trousers for clip N (`work/cN.mov` to `work/cleanN.mp4`).
 2. `edit/compose_v2.py` renders the layouts, B-roll, graphics and captions to `out/video.mp4`.
-3. `edit/splice6.py`, then `edit/warp6.py`, rebuild the clip 6 ending.
+3. `edit/splice6_v2.py`, then `edit/warp6.py`, rebuild the clip 6 ending.
 4. `edit/mixaudio.py` mixes the speech, ducked music and SFX to `out/audio.wav`; mux both with ffmpeg.
 
 The scripts expect `work/`, `broll/`, `assets/` and `models/selfie_multiclass.tflite` next to them.
