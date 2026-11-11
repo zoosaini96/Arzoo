@@ -1,6 +1,6 @@
 # Closing-costs explainer: edit notes and credits
 
-**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.0 s, H.264/AAC, -14 LUFS.
+**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.2 s, H.264/AAC, -14 LUFS.
 
 The six source clips are joined in upload order. Clip 1 ends with the line "down payment to ilava... closing costs kehnde han",
 and clip 2 is a retake of that same line, so clip 1's copy (11.6–16.3 s) is dropped and clip 2's take is used.
@@ -17,9 +17,16 @@ In clip 6, "please feel free to reach me out" is re-ordered to "please feel free
 - The trousers keep their original colour. `edit/trousers.py` (beige recolour) is kept but switched off with `RECOLOR = False`
   in `edit/process_clips.py`.
 
-## Layout
-The opening headline sits at the very top of the frame, clear of the presenter's head. "WAIT!", "CLOSING COSTS", the questions card and
-"THANK YOU!" sit over the lower body, so no graphic covers her face.
+## Visual style: warm editorial (`edit/compose_v2.py`)
+This style is deliberately different from the navy/gold, all-caps look of the earlier videos.
+- Palette: cream, forest green and terracotta, with a warm film grade (lifted blacks, warm balance, soft vignette).
+- Type: EB Garamond (serif headlines), Manrope (captions and labels), DM Mono (receipt). All SIL Open Font License.
+- Sentence-case captions on cream bars, with key words in terracotta.
+- B-roll appears as tilted photo cards over the presenter's body, with a camera-shutter sound. Her face stays visible.
+- The fee list is a printed receipt that types out line by line.
+- Chapter tags (01 The surprise, 02 What's included, 03 Plan ahead, 04 Questions) and a "Closing Costs 101" series title.
+- "Wait." briefly drains the colour from the frame. Headlines and title cards never cover her head.
+- `edit/compose.py` (style 1: navy/gold) is kept for reference.
 
 ## Third-party media (Mixkit free licences: free for commercial use, no attribution required)
 Only items marked with Mixkit's *Free* licence were used (no "Restricted" items).
@@ -29,15 +36,15 @@ B-roll (mixkit.co video IDs): 4009 (houses under a blue sky), 18263 (counting co
 
 Music: "Raising Me Higher" by Ahjay Stelino (Mixkit track 34, Mixkit Stock Music Free License). It sits about 9 dB under the voice and rises in pauses and the outro.
 
-Sound effects (Mixkit SFX IDs): 1490 fast whoosh, 1492 cinematic fast whoosh, 1489 air woosh, 2903 movie whoosh impact,
+Sound effects (Mixkit SFX IDs): 1133 camera shutter, 1125 typewriter soft click, 2995 stapling paper, 1490 fast whoosh, 1492 cinematic fast whoosh, 1489 air woosh, 2903 movie whoosh impact,
 2354 message pop, 2357 bubble pop, 1993 clinking coins, 1120 box-check click, 938 uplifting bells.
 
 Captions are English translations of the Punjabi/English speech. All motion graphics, icons and captions were drawn
-programmatically (Montserrat font, SIL Open Font License).
+programmatically (EB Garamond, Manrope and DM Mono fonts, SIL Open Font License).
 
 ## Rebuild
 1. `edit/process_clips.py N` removes the house number and recolours the trousers for clip N (`work/cN.mov` to `work/cleanN.mp4`).
-2. `edit/compose.py` renders the layouts, B-roll, graphics and captions to `out/video.mp4`.
+2. `edit/compose_v2.py` renders the layouts, B-roll, graphics and captions to `out/video.mp4`.
 3. `edit/splice6.py`, then `edit/warp6.py`, rebuild the clip 6 ending.
 4. `edit/mixaudio.py` mixes the speech, ducked music and SFX to `out/audio.wav`; mux both with ffmpeg.
 
