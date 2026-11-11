@@ -1,24 +1,22 @@
 # Closing-costs explainer: edit notes and credits
 
-**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.6 s, H.264/AAC, -14 LUFS.
+**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.1 s, H.264/AAC, -14 LUFS.
 
 The six source clips are joined in upload order. Clip 1 ends with the line "down payment to ilava... closing costs kehnde han",
 and clip 2 is a retake of that same line, so clip 1's copy (11.6–16.3 s) is dropped and clip 2's take is used.
 The silent pause between the hook and "Wait..." in clip 1 (5.95–6.62 s) is also removed.
 
 ## Speech edit
-In clip 6, "please feel free to reach me out" is re-ordered to "please feel free to reach out to me" (`edit/splice6_v2.py`):
-- "out" is clip 6, 4.615–4.865 s (starting after the "me" glide).
-- "to" is taken from clip 1 ("you need **to** budget", 8.555–8.705 s), because it has a crisp "t" and a full vowel.
-- "me" is clip 6, 4.445–4.572 s, with its vowel lengthened (pitch kept) so it sounds phrase-final.
-- The pieces are loudness-matched, with short natural pauses, before "thank you".
-- The whole phrase "reach out to me" is slowed to 90% (pitch kept) and lifted slightly, so each word is distinct.
-  Settings: `splice6_v2.py 0.615,0.5,0.06,0.07,1,1,0,0.9,1.18`.
-- Full-screen B-roll (a woman typing a message on her phone) covers "please feel free to reach out to me", so the re-ordered words are never lip-synced on camera.
-  The video returns to the presenter for "Thank you!", which is her original take.
+In clip 6, "please feel free to reach me out" is re-ordered to "please feel free to reach out to me" (`edit/splice6_v3.py`, settings `0.75,1.077,0.80,0.89,0.05`):
+- "out" is clip 6, 4.612–4.790 s, without its own t-release, so "out to" shares one "t" as in natural speech.
+- "to" comes from clip 1 ("you need **to** budget", 8.56–8.70 s), because it has a crisp "t".
+- "me" is clip 6, 4.445–4.572 s, with a slightly lengthened vowel.
+- "out", "to" and "me" are pitch-shifted (formants kept) onto a smooth falling contour (about 180, 180 and 189→169 Hz) after "reach",
+  so the phrase sounds like one natural sentence ending. The pieces are joined with short crossfades at her natural speed, with no added slowdown.
 
-The video over that span is gently slowed to stay in sync (`edit/warp6.py`).
-The whole voice track also gets light noise reduction and a presence boost for clearer consonants, and the music sits further under it.
+Full-screen B-roll (a woman typing a message on her phone) covers "please feel free to reach out to me", so the re-ordered words are never lip-synced on camera.
+The video returns to the presenter for "Thank you!", which is her original take (`edit/warp6.py` keeps it in sync).
+The whole voice track also gets light noise reduction and a presence boost, and the music sits well under it.
 
 ## Transitions
 Every join between clips is an optical-flow morph cut (0.3 s) instead of a hard cut, and the zoom carries smoothly across each join, so the presenter no longer jumps between takes.
@@ -61,7 +59,7 @@ programmatically (EB Garamond, Manrope and DM Mono fonts, SIL Open Font License)
 ## Rebuild
 1. `edit/process_clips.py N` removes the house number and recolours the trousers for clip N (`work/cN.mov` to `work/cleanN.mp4`).
 2. `edit/compose_v2.py` renders the layouts, B-roll, graphics and captions to `out/video.mp4`.
-3. `edit/splice6_v2.py`, then `edit/warp6.py`, rebuild the clip 6 ending.
+3. `edit/splice6_v3.py`, then `edit/warp6.py`, rebuild the clip 6 ending.
 4. `edit/mixaudio.py` mixes the speech, ducked music and SFX to `out/audio.wav`; mux both with ffmpeg.
 
 The scripts expect `work/`, `broll/`, `assets/` and `models/selfie_multiclass.tflite` next to them.

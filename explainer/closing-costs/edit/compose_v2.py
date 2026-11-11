@@ -20,7 +20,7 @@ INK = (30, 43, 39); MUTED = (98, 112, 104)
 
 # ------------------------------------------------------------------ timeline (same cut as style 1)
 SEGS = [(1, 0.00, 5.95), (1, 6.62, 11.30), (2, 0.00, 4.76), (3, 0.25, 9.20),
-        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.97)]
+        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.55)]
 OUTRO = 2.4
 offs = []; t = 0
 for c, a, b in SEGS: offs.append(t); t += b - a
@@ -42,7 +42,7 @@ CAP = [
  (5, 0.03, 1.98, "Check with your *mortgage professional*"), (5, 1.98, 3.00, "or *lawyer*"),
  (5, 3.00, 5.22, "and confirm your *estimated* closing costs"),
  (6, 0.00, 1.52, "Got any questions"), (6, 1.52, 3.52, "about *closing costs?*"),
- (6, 3.45, 5.40, "Feel free to *reach out to me*"),
+ (6, 3.45, 4.98, "Feel free to *reach out to me*"),
 ]
 CAPS = [(T(s, a), T(s, b), txt) for s, a, b, txt in CAP]
 
@@ -72,7 +72,7 @@ for _, s in RECEIPT: sfx(T(3, s), "1125", 0.75)
 sfx(T(3, 8.55), "1120", 0.6)
 sfx(T(4, 2.75), "2995", 0.6)
 sfx(T(6, 0.25), "2354", 0.45)
-sfx(T(6, 5.45), "938", 0.35)
+sfx(T(6, 5.03), "938", 0.35)
 sfx(VOICE_END - 0.05, "1490", 0.35)
 
 # ------------------------------------------------------------------ helpers
@@ -140,7 +140,7 @@ clips = {i: Clip(f"work/clean{i}.mp4") for i in range(1, 6)}
 clips[6] = Clip("work/clean6_fixed.mp4")
 brolls = {k: Clip(f"broll/{k}.mp4") for k in ["4009", "18263", "1717715134", "4809", "241", "43270"]}
 # full-screen B-roll over "please feel free to reach out to me" (hides the re-ordered words)
-FULL_BROLL = (T(6, 3.40), T(6, 5.40), "43270")
+FULL_BROLL = (T(6, 3.40), T(6, 4.96), "43270")
 TRANS = 0.30  # morph-cut length at every clip join
 
 # warm film grade: lifted blacks, gentle S-curve, warm balance, vignette
@@ -386,9 +386,9 @@ def overlays(canvas, t, si):
             paste(canvas, lt_, 540 - 900 * (1 - ease_out(k / 0.45)), 1150)
     if si == 6:
         k = t - T(6, 0.25)
-        if k >= 0 and t < T(6, 5.40):
+        if k >= 0 and t < T(6, 4.98):
             paste(canvas, cached("cta", cta_card), 540, 1150 + 700 * (1 - ease_out(k / 0.45)))
-        k = t - T(6, 5.40)
+        k = t - T(6, 4.98)
         if k >= 0:
             paste(canvas, cached("ty", lambda: plate("Thank you!", garamond("Italic", 130), FOREST)), 540, 1150,
                   scale=0.9 + 0.1 * ease_out(k / 0.3), alpha=ease_out(k / 0.2))
