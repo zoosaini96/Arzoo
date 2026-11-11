@@ -17,7 +17,7 @@ INK = (20, 20, 28)
 # ------------------------------------------------------------------ timeline
 # (clip, src_in, src_out)
 SEGS = [(1, 0.00, 5.95), (1, 6.62, 11.30), (2, 0.00, 4.76), (3, 0.25, 9.20),
-        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.48)]
+        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.65)]
 OUTRO = 2.2
 offs = []; t = 0
 for c, a, b in SEGS: offs.append(t); t += b - a
@@ -44,7 +44,7 @@ CAP = [
  (5, 0.03, 1.98, "CHECK WITH YOUR *MORTGAGE PROFESSIONAL*"), (5, 1.98, 3.00, "OR *LAWYER*"),
  (5, 3.00, 5.22, "AND CONFIRM YOUR *ESTIMATED* CLOSING COSTS"),
  (6, 0.00, 1.52, "GOT ANY QUESTIONS"), (6, 1.52, 3.52, "ABOUT *CLOSING COSTS?*"),
- (6, 3.52, 4.90, "FEEL FREE TO *REACH OUT!*"),
+ (6, 3.52, 5.07, "FEEL FREE TO *REACH OUT TO ME!*"),
 ]
 CAPS = [(T(s, a), T(s, b), txt) for s, a, b, txt in CAP]
 
@@ -74,7 +74,7 @@ sfx(T(2, 0.25), "1993", 0.45)                 # coins
 for _, s in CHECK: sfx(T(3, s), "2357", 0.6)  # checklist pops
 sfx(T(4, 2.75), "1120", 0.7)                  # budget stamp
 sfx(T(6, 0.25), "2354", 0.5)                  # CTA pop
-sfx(T(6, 4.95), "938", 0.4)                   # thank you
+sfx(T(6, 5.12), "938", 0.4)                   # thank you
 sfx(VOICE_END + 0.05, "1490", 0.4)            # outro whoosh
 
 # ------------------------------------------------------------------ easing / helpers
@@ -175,7 +175,8 @@ class Clip:
     def at(self, t):
         return self.f[min(len(self.f) - 1, max(0, int(round(t * FPS))))]
 
-clips = {i: Clip(f"work/clean{i}.mp4") for i in range(1, 7)}
+clips = {i: Clip(f"work/clean{i}.mp4") for i in range(1, 6)}
+clips[6] = Clip("work/clean6_fixed.mp4")  # re-timed: "reach out to me"
 brolls = {k: Clip(f"broll/{k}.mp4") for k in ["4009", "18263", "1717715134", "4809", "241"]}
 
 def sharpen(img):
@@ -363,10 +364,10 @@ def overlays_full(canvas, t, si):
             paste(canvas, cc, 540, 1150, scale=2.0 - 1.0 * ease_out(k / 0.2), alpha=clamp(k / 0.1))
     if si == 6:
         k = t - T(6, 0.25)
-        if k >= 0 and t < T(6, 4.9):
+        if k >= 0 and t < T(6, 5.07):
             cta = cached("cta", _cta)
             paste(canvas, cta, 540 + 700 * (1 - ease_out(k / 0.4)), 1130)
-        k = t - T(6, 4.9)
+        k = t - T(6, 5.07)
         if k >= 0:
             ty = cached("ty", lambda: text_el("THANK YOU!", font("Black", 120), fill=WHITE, stroke=10, stroke_fill=NAVY))
             paste(canvas, ty, 540, 1150, scale=back(k / 0.3))

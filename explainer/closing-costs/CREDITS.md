@@ -1,10 +1,15 @@
 # Closing-costs explainer: edit notes and credits
 
-**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 40.9 s, H.264/AAC, -14 LUFS.
+**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.0 s, H.264/AAC, -14 LUFS.
 
 The six source clips are joined in upload order. Clip 1 ends with the line "down payment to ilava... closing costs kehnde han",
 and clip 2 is a retake of that same line, so clip 1's copy (11.6–16.3 s) is dropped and clip 2's take is used.
 The silent pause between the hook and "Wait..." in clip 1 (5.95–6.62 s) is also removed.
+
+## Speech edit
+In clip 6, "please feel free to reach me out" is re-ordered to "please feel free to reach out to me" using her own words:
+"out" (4.590–4.870 s), then "to" (4.055–4.168 s, the "to" from "free to"), then "me" (4.445–4.578 s), then a 70 ms pause before
+"thank you" (`edit/splice6.py`). The video over that 0.6 s span is gently slowed to stay in sync (`edit/warp6.py`).
 
 ## Clean-up on the presenter footage
 - **House number "1105" removed** on every frame. The digits are detected per frame (handheld camera, so the position drifts),
@@ -33,6 +38,7 @@ programmatically (Montserrat font, SIL Open Font License).
 ## Rebuild
 1. `edit/process_clips.py N` removes the house number and recolours the trousers for clip N (`work/cN.mov` to `work/cleanN.mp4`).
 2. `edit/compose.py` renders the layouts, B-roll, graphics and captions to `out/video.mp4`.
-3. `edit/mixaudio.py` mixes the speech, ducked music and SFX to `out/audio.wav`; mux both with ffmpeg.
+3. `edit/splice6.py`, then `edit/warp6.py`, rebuild the clip 6 ending.
+4. `edit/mixaudio.py` mixes the speech, ducked music and SFX to `out/audio.wav`; mux both with ffmpeg.
 
 The scripts expect `work/`, `broll/`, `assets/` and `models/selfie_multiclass.tflite` next to them.
