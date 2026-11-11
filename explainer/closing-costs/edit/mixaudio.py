@@ -4,7 +4,7 @@ tl=json.load(open("out/timeline.json")); total=tl["total"]
 ins=[]; fc=[]
 # voice pieces
 for k,(c,a,b) in enumerate(tl["segs"]):
-    ins += ["-i", "work/c6_fixed.wav" if c == 6 else f"work/c{c}.mov"]  # clip 6: "reach out to me" splice
+    ins += ["-i", {6: "work/c6_fixed.wav", 3: "work/c3_fixed.wav"}.get(c, f"work/c{c}.mov")]  # spliced speech (clip 3: lawyer, clip 6: reach out to me)
     d=b-a
     fc.append(f"[{k}:a]atrim={a}:{b},asetpts=PTS-STARTPTS,aformat=sample_rates=48000:channel_layouts=stereo,afade=t=in:d=0.015,afade=t=out:st={d-0.02:.3f}:d=0.02[v{k}]")
 n=len(tl["segs"])

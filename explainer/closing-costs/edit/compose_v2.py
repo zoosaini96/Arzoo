@@ -33,7 +33,7 @@ CAP = [
  (1, 7.48, 8.38, "There's something else"), (1, 8.38, 9.60, "you need to *budget* for"),
  (2, 0.00, 1.52, "Besides the *down payment,*"), (2, 1.52, 3.18, "there are *additional expenses*"),
  (2, 3.18, 4.76, "called *closing costs*"),
- (3, 0.25, 1.40, "like *lender fees,*"), (3, 1.40, 2.55, "*home inspection* fees,"),
+ (3, 0.25, 1.40, "like *lawyer fees,*"), (3, 1.40, 2.55, "*home inspection* fees,"),
  (3, 2.55, 3.65, "*title insurance,*"), (3, 3.65, 4.85, "*title registration,*"),
  (3, 4.85, 6.40, "*property tax* adjustments"), (3, 6.40, 7.60, "and sometimes"),
  (3, 7.60, 9.20, "an *appraisal fee* too"),
@@ -53,7 +53,7 @@ CARDS = [  # photo-card B-roll windows (final time), clip id, handwritten label,
  (T(5, 0.03), T(5, 2.60), "4809", "your mortgage professional", 3.0),
  (T(5, 2.60), T(5, 5.22), "241", "or your lawyer", -3.0),
 ]
-RECEIPT = [("Lender fees", 0.58), ("Home inspection", 1.54), ("Title insurance", 2.68),
+RECEIPT = [("Lawyer fees", 0.58), ("Home inspection", 1.54), ("Title insurance", 2.68),
            ("Title registration", 3.76), ("Property tax adj.", 5.02), ("Appraisal fee*", 7.76)]
 CHAPTERS = [(0, "01", "The surprise"), (T(2, 0), "02", "What's included"), (T(4, 0.1), "03", "Plan ahead"),
             (T(6, 0), "04", "Questions")]
@@ -138,9 +138,10 @@ class Clip:
 
 clips = {i: Clip(f"work/clean{i}.mp4") for i in range(1, 6)}
 clips[6] = Clip("work/clean6_fixed.mp4")
-brolls = {k: Clip(f"broll/{k}.mp4") for k in ["4009", "18263", "1717715134", "4809", "241", "43270"]}
+brolls = {k: Clip(f"broll/{k}.mp4") for k in ["4009", "18263", "1717715134", "4809", "241", "43270", "241v"]}
 # full-screen B-roll over "please feel free to reach out to me" (hides the re-ordered words)
-FULL_BROLL = (T(6, 3.40), T(6, 4.96), "43270")
+FULL_BROLLS = [(T(3, 0.28), T(3, 1.32), "241v"),   # covers the swapped word "lawyer"
+              (T(6, 3.40), T(6, 4.96), "43270")]
 TRANS = 0.30  # morph-cut length at every clip join
 
 # warm film grade: lifted blacks, gentle S-curve, warm balance, vignette
@@ -324,8 +325,8 @@ def render(fi):
         k = t - T(1, 6.95)
         if 0 <= k < 1.2: desat = 0.85 * (1 - ease_in_out((k - 0.7) / 0.5))
     canvas = Image.fromarray(cv2.cvtColor(grade(presenter(src, z), desat), cv2.COLOR_BGR2RGB)).convert("RGBA")
-    f0, f1, fk = FULL_BROLL
-    if f0 - 0.25 <= t < f1 + 0.25:
+    for f0, f1, fk in FULL_BROLLS:
+      if f0 - 0.25 <= t < f1 + 0.25:
         fr = grade(brolls[fk].at(t - f0 + 0.25))
         a_ = ease_in_out((t - (f0 - 0.25)) / 0.25) * (1 - ease_in_out((t - f1) / 0.25))
         br = Image.fromarray(cv2.cvtColor(fr, cv2.COLOR_BGR2RGB)).convert("RGBA")

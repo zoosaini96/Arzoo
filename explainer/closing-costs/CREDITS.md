@@ -6,7 +6,13 @@ The six source clips are joined in upload order. Clip 1 ends with the line "down
 and clip 2 is a retake of that same line, so clip 1's copy (11.6–16.3 s) is dropped and clip 2's take is used.
 The silent pause between the hook and "Wait..." in clip 1 (5.95–6.62 s) is also removed.
 
-## Speech edit
+## Speech edits
+**Clip 3, "lender fees" → "lawyer fees"** (`edit/splice3.py`, settings `2.18,2.51,1.0,1,0`): she says "lender" (clip 3, 0.655–1.045 s).
+It is replaced with "lawyer" from clip 5 ("or lawyer", 2.18–2.51 s), time-fitted into the same slot (the clip length is unchanged)
+and loudness-matched. A full-screen contract-signing shot (Mixkit 241, HD vertical crop) covers "like lawyer fees", so the lips are not shown.
+The caption and the receipt's first line now read "Lawyer fees".
+
+**Clip 6, "reach me out" → "reach out to me":**
 In clip 6, "please feel free to reach me out" is re-ordered to "please feel free to reach out to me" (`edit/splice6_v3.py`, settings `0.75,1.077,0.80,0.89,0.05`):
 - "out" is clip 6, 4.612–4.790 s, without its own t-release, so "out to" shares one "t" as in natural speech.
 - "to" comes from clip 1 ("you need **to** budget", 8.56–8.70 s), because it has a crisp "t".
