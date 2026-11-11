@@ -20,7 +20,7 @@ INK = (30, 43, 39); MUTED = (98, 112, 104)
 
 # ------------------------------------------------------------------ timeline (same cut as style 1)
 SEGS = [(1, 0.00, 5.95), (1, 6.62, 11.30), (2, 0.00, 4.76), (3, 0.25, 9.20),
-        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.80)]
+        (4, 0.10, 3.79), (5, 0.03, 5.22), (6, 0.00, 5.97)]
 OUTRO = 2.4
 offs = []; t = 0
 for c, a, b in SEGS: offs.append(t); t += b - a
@@ -42,7 +42,7 @@ CAP = [
  (5, 0.03, 1.98, "Check with your *mortgage professional*"), (5, 1.98, 3.00, "or *lawyer*"),
  (5, 3.00, 5.22, "and confirm your *estimated* closing costs"),
  (6, 0.00, 1.52, "Got any questions"), (6, 1.52, 3.52, "about *closing costs?*"),
- (6, 3.52, 5.24, "Feel free to *reach out to me*"),
+ (6, 3.45, 5.40, "Feel free to *reach out to me*"),
 ]
 CAPS = [(T(s, a), T(s, b), txt) for s, a, b, txt in CAP]
 
@@ -72,7 +72,7 @@ for _, s in RECEIPT: sfx(T(3, s), "1125", 0.75)
 sfx(T(3, 8.55), "1120", 0.6)
 sfx(T(4, 2.75), "2995", 0.6)
 sfx(T(6, 0.25), "2354", 0.45)
-sfx(T(6, 5.28), "938", 0.35)
+sfx(T(6, 5.45), "938", 0.35)
 sfx(VOICE_END - 0.05, "1490", 0.35)
 
 # ------------------------------------------------------------------ helpers
@@ -138,7 +138,10 @@ class Clip:
 
 clips = {i: Clip(f"work/clean{i}.mp4") for i in range(1, 6)}
 clips[6] = Clip("work/clean6_fixed.mp4")
-brolls = {k: Clip(f"broll/{k}.mp4") for k in ["4009", "18263", "1717715134", "4809", "241"]}
+brolls = {k: Clip(f"broll/{k}.mp4") for k in ["4009", "18263", "1717715134", "4809", "241", "43270"]}
+# full-screen B-roll over "please feel free to reach out to me" (hides the re-ordered words)
+FULL_BROLL = (T(6, 3.40), T(6, 5.40), "43270")
+TRANS = 0.30  # morph-cut length at every clip join
 
 # warm film grade: lifted blacks, gentle S-curve, warm balance, vignette
 _x = np.arange(256) / 255.0
@@ -308,18 +311,25 @@ def render(fi):
     t = fi / FPS
     if t >= VOICE_END: return render_outro(t - VOICE_END)
     si = seg_at(t); c, a, b = SEGS[si]; lt = t - offs[si]
-    src = clips[c].at(a + lt)
-    if si == 1:
+    src, z_override = presenter_src(t)
+    if z_override is not None: z = z_override
+    elif si == 1:
         k = t - T(1, 6.95); z = 1.06 + (0.12 * back(k / 0.2) if k >= 0 else 0)
         k2 = t - T(1, 9.70)
         if k2 >= 0: z = 1.18 - 0.10 * ease_out(k2 / 0.6)
     else:
-        z0, z1 = ZOOM[si]; z = z0 + (z1 - z0) * ease_in_out(lt / (b - a))
+        z = seg_zoom(si, lt)
     desat = 0.0
     if si == 1:
         k = t - T(1, 6.95)
         if 0 <= k < 1.2: desat = 0.85 * (1 - ease_in_out((k - 0.7) / 0.5))
     canvas = Image.fromarray(cv2.cvtColor(grade(presenter(src, z), desat), cv2.COLOR_BGR2RGB)).convert("RGBA")
+    f0, f1, fk = FULL_BROLL
+    if f0 - 0.25 <= t < f1 + 0.25:
+        fr = grade(brolls[fk].at(t - f0 + 0.25))
+        a_ = ease_in_out((t - (f0 - 0.25)) / 0.25) * (1 - ease_in_out((t - f1) / 0.25))
+        br = Image.fromarray(cv2.cvtColor(fr, cv2.COLOR_BGR2RGB)).convert("RGBA")
+        canvas = Image.blend(canvas, br, a_)
 
     # chapter tag + series title
     cur = [ch for ch in CHAPTERS if t >= ch[0]][-1]
@@ -376,12 +386,45 @@ def overlays(canvas, t, si):
             paste(canvas, lt_, 540 - 900 * (1 - ease_out(k / 0.45)), 1150)
     if si == 6:
         k = t - T(6, 0.25)
-        if k >= 0 and t < T(6, 5.24):
+        if k >= 0 and t < T(6, 5.40):
             paste(canvas, cached("cta", cta_card), 540, 1150 + 700 * (1 - ease_out(k / 0.45)))
-        k = t - T(6, 5.24)
+        k = t - T(6, 5.40)
         if k >= 0:
             paste(canvas, cached("ty", lambda: plate("Thank you!", garamond("Italic", 130), FOREST)), 540, 1150,
                   scale=0.9 + 0.1 * ease_out(k / 0.3), alpha=ease_out(k / 0.2))
+
+def seg_zoom(si, lt):
+    c, a, b = SEGS[si]
+    if si == 1:  # resting zoom of the "Wait" segment (punch-ins handled in render)
+        return 1.06 if lt < 0.5 else 1.08
+    z0, z1 = ZOOM[si]; return z0 + (z1 - z0) * ease_in_out(lt / (b - a))
+
+_dis = cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM)
+def morph(A, B, al):
+    """flow-based morph between two presenter frames (720x1280), al in [0,1]."""
+    ga = cv2.cvtColor(cv2.resize(A, (360, 640)), cv2.COLOR_BGR2GRAY)
+    gb = cv2.cvtColor(cv2.resize(B, (360, 640)), cv2.COLOR_BGR2GRAY)
+    fab = cv2.resize(_dis.calc(ga, gb, None), (720, 1280)) * 2
+    fba = cv2.resize(_dis.calc(gb, ga, None), (720, 1280)) * 2
+    h, w = A.shape[:2]; gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
+    Aw = cv2.remap(A, gx - al * fab[..., 0], gy - al * fab[..., 1], cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+    Bw = cv2.remap(B, gx - (1 - al) * fba[..., 0], gy - (1 - al) * fba[..., 1], cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
+    return cv2.addWeighted(Aw, 1 - al, Bw, al, 0)
+
+def presenter_src(t):
+    """source frame for time t; inside a join window returns a morph and a blended zoom."""
+    for i in range(1, len(SEGS)):
+        B0 = offs[i]
+        if B0 - TRANS / 2 <= t < B0 + TRANS / 2:
+            pc, pa, pb = SEGS[i - 1]; nc, na, nb = SEGS[i]
+            A = clips[pc].at(min(pb, pa + (t - offs[i - 1])) - 0.0)
+            Bf = clips[nc].at(na + max(0.0, t - B0))
+            al = ease_in_out((t - (B0 - TRANS / 2)) / TRANS)
+            za = seg_zoom(i - 1, pb - pa); zb = seg_zoom(i, 0.0)
+            if i - 1 == 1: za = 1.08
+            return morph(A, Bf, al), za + (zb - za) * al
+    si = seg_at(t); c, a, b = SEGS[si]
+    return clips[c].at(a + t - offs[si]), None
 
 def render_outro(k):
     if "bg" not in _cache:

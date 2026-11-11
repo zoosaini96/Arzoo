@@ -1,6 +1,6 @@
 # Closing-costs explainer: edit notes and credits
 
-**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.4 s, H.264/AAC, -14 LUFS.
+**Output:** `closing-costs-explainer.mp4` is 1080x1920 (9:16), 30 fps, 41.6 s, H.264/AAC, -14 LUFS.
 
 The six source clips are joined in upload order. Clip 1 ends with the line "down payment to ilava... closing costs kehnde han",
 and clip 2 is a retake of that same line, so clip 1's copy (11.6–16.3 s) is dropped and clip 2's take is used.
@@ -12,9 +12,16 @@ In clip 6, "please feel free to reach me out" is re-ordered to "please feel free
 - "to" is taken from clip 1 ("you need **to** budget", 8.555–8.705 s), because it has a crisp "t" and a full vowel.
 - "me" is clip 6, 4.445–4.572 s, with its vowel lengthened (pitch kept) so it sounds phrase-final.
 - The pieces are loudness-matched, with short natural pauses, before "thank you".
+- The whole phrase "reach out to me" is slowed to 90% (pitch kept) and lifted slightly, so each word is distinct.
+  Settings: `splice6_v2.py 0.615,0.5,0.06,0.07,1,1,0,0.9,1.18`.
+- Full-screen B-roll (a woman typing a message on her phone) covers "please feel free to reach out to me", so the re-ordered words are never lip-synced on camera.
+  The video returns to the presenter for "Thank you!", which is her original take.
 
 The video over that span is gently slowed to stay in sync (`edit/warp6.py`).
 The whole voice track also gets light noise reduction and a presence boost for clearer consonants, and the music sits further under it.
+
+## Transitions
+Every join between clips is an optical-flow morph cut (0.3 s) instead of a hard cut, and the zoom carries smoothly across each join, so the presenter no longer jumps between takes.
 
 ## Hook
 The first ~4 s show a hook card aimed at clients: "FIRST-TIME HOME BUYERS / Saved your down payment? / *You're not done yet.*"
@@ -41,7 +48,7 @@ This style is deliberately different from the navy/gold, all-caps look of the ea
 Only items marked with Mixkit's *Free* licence were used (no "Restricted" items).
 
 B-roll (mixkit.co video IDs): 4009 (houses under a blue sky), 18263 (counting coins), 1717715134 (writing a list in a notebook),
-4809 (business meeting), 241 (signing a contract).
+4809 (business meeting), 241 (signing a contract), 43270 (woman typing on her phone, vertical 1080x1920).
 
 Music: "Raising Me Higher" by Ahjay Stelino (Mixkit track 34, Mixkit Stock Music Free License). It sits well under the voice and rises in pauses and the outro.
 

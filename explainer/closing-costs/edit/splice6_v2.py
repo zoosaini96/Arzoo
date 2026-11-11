@@ -28,21 +28,28 @@ def join(a, b, xf=0.010):
     return np.concatenate([a[:-k], a[-k:]*(1-r) + b[:k]*r, b[k:]])
 def silence(s): return np.zeros((int(s*SR), 2))
 
-def build(out_start=0.605, me_stretch=0.55, gap=0.05):
+def build(out_start=0.605, me_stretch=0.55, gap=0.05, gap1=0.03, out_tempo=1.0, to_tempo=1.0, gap2=0.0, phrase_tempo=1.0, phrase_gain=1.0):
     head  = seg(c6, 0.000, 4.445)                      # "... please feel free to reach"
     out_  = fade(seg(c6, 4.0 + out_start, 4.865), 0.012, 0.015)   # "out" incl. t-release
+    if out_tempo != 1.0: out_ = fade(stretch(out_, out_tempo), 0.008, 0.015)
     to    = fade(seg(c1, 8.555, 8.705), 0.006, 0.020)    # "to" from clip 1 ("need to budget")
+    if to_tempo != 1.0: to = fade(stretch(to, to_tempo), 0.004, 0.02)
     m     = seg(c6, 4.445, 4.500)                      # "m"
     ee    = stretch(seg(c6, 4.500, 4.572), me_stretch)  # "ee", lengthened, pitch kept
     me    = fade(join(m, ee, 0.006), 0.006, 0.060)
     tail  = seg(c6, 4.865, len(c6)/SR)                 # pause + "thank you"
     ref = rms(seg(c6, 4.17, 4.31))                     # loudness of "rea(ch)"
     to *= ref / rms(to) * 0.9; me *= ref / rms(me) * 0.95; out_ *= ref / rms(out_) * 0.95
-    y = join(head, silence(0.03), 0.0); y = join(y, out_, 0.0)
-    y = join(y, silence(gap), 0.0); y = join(y, to, 0.0); y = join(y, me, 0.008)
+    # phrase = "reach out to me" (optionally slowed as a whole for clarity)
+    pre, reach = head[:int(4.17*SR)], head[int(4.17*SR):]
+    ph = join(reach, silence(gap1), 0.0); ph = join(ph, out_, 0.0)
+    ph = join(ph, silence(gap), 0.0); ph = join(ph, to, 0.0); ph = join(ph, silence(gap2), 0.0) if gap2 else ph; ph = join(ph, me, 0.008 if not gap2 else 0.0)
+    if phrase_tempo != 1.0: ph = stretch(ph, phrase_tempo)
+    ph = fade(ph * phrase_gain, 0.0, 0.03)
+    y = join(pre, ph, 0.006)
     y = join(y, silence(0.10), 0.0); y = join(y, tail, 0.0)
     return y
 if __name__ == "__main__":
-    a = [float(v) for v in sys.argv[1:4]] if len(sys.argv) > 3 else []
-    y = build(*a); sf.write(sys.argv[4] if len(sys.argv) > 4 else "work/c6_fixed.wav", y, SR)
+    a = [float(v) for v in sys.argv[1].split(',')] if len(sys.argv) > 1 else []
+    y = build(*a); sf.write(sys.argv[2] if len(sys.argv) > 2 else "work/c6_fixed.wav", y, SR)
     print("len", len(y)/SR)
