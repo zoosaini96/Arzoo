@@ -9,8 +9,12 @@ The silent pause between the hook and "Wait..." in clip 1 (5.95–6.62 s) is als
 ## Clean-up on the presenter footage
 - **House number "1105" removed** on every frame. The digits are detected per frame (handheld camera, so the position drifts),
   the box is smoothed over time, and the area is refilled with the trim band's own texture.
-- **Trousers recoloured to beige**. A MediaPipe multiclass segmentation mask (clothes class) is split at the waistline
-  (navy shirt vs. black trousers), and the fabric is remapped to beige while keeping the folds and shading. The shoes are excluded.
+- The trousers keep their original colour. `edit/trousers.py` (beige recolour) is kept but switched off with `RECOLOR = False`
+  in `edit/process_clips.py`.
+
+## Layout
+The opening headline sits at the very top of the frame, clear of the presenter's head. "WAIT!", "CLOSING COSTS", the questions card and
+"THANK YOU!" sit over the lower body, so no graphic covers her face.
 
 ## Third-party media (Mixkit free licences: free for commercial use, no attribution required)
 Only items marked with Mixkit's *Free* licence were used (no "Restricted" items).
@@ -18,7 +22,7 @@ Only items marked with Mixkit's *Free* licence were used (no "Restricted" items)
 B-roll (mixkit.co video IDs): 4009 (houses under a blue sky), 18263 (counting coins), 1717715134 (writing a list in a notebook),
 4809 (business meeting), 241 (signing a contract).
 
-Music: "Motivating Mornings" by Ahjay Stelino (Mixkit track 33, Mixkit Stock Music Free License).
+Music: "Raising Me Higher" by Ahjay Stelino (Mixkit track 34, Mixkit Stock Music Free License). It sits about 9 dB under the voice and rises in pauses and the outro.
 
 Sound effects (Mixkit SFX IDs): 1490 fast whoosh, 1492 cinematic fast whoosh, 1489 air woosh, 2903 movie whoosh impact,
 2354 message pop, 2357 bubble pop, 1993 clinking coins, 1120 box-check click, 938 uplifting bells.

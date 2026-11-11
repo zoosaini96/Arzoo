@@ -346,7 +346,7 @@ def overlays_full(canvas, t, si):
     if si == 0:
         k = t - 0.05
         title = cached("hook", lambda: _hook())
-        paste(canvas, title, 540, 250 - 60 * (1 - ease_out(k / 0.45)), alpha=ease_out(k / 0.3))
+        paste(canvas, title, 540, 145 - 60 * (1 - ease_out(k / 0.45)), alpha=ease_out(k / 0.3))
         k = t - T(0, 1.25)
         if k >= 0:
             badge = cached("dp", lambda: _badge("DOWN PAYMENT", "SAVED"))
@@ -356,20 +356,20 @@ def overlays_full(canvas, t, si):
         if 0 <= k < T(1, 9.6) - T(1, 6.95):
             wait = cached("wait", lambda: text_el("WAIT!", font("Black", 210), fill=GOLD, stroke=14, stroke_fill=NAVY))
             jit = 6 * math.sin(k * 40) * max(0, 1 - k / 0.5)
-            paste(canvas, wait.rotate(-6 + jit, expand=True, resample=Image.BICUBIC), 540, 420, scale=1.5 - 0.5 * back(k / 0.25), alpha=clamp(k / 0.08))
+            paste(canvas, wait.rotate(-6 + jit, expand=True, resample=Image.BICUBIC), 540, 1150, scale=1.5 - 0.5 * back(k / 0.25), alpha=clamp(k / 0.08))
         k = t - T(1, 9.70)
         if k >= 0:
             cc = cached("cc", _cc_title)
-            paste(canvas, cc, 540, 360, scale=2.0 - 1.0 * ease_out(k / 0.2), alpha=clamp(k / 0.1))
+            paste(canvas, cc, 540, 1150, scale=2.0 - 1.0 * ease_out(k / 0.2), alpha=clamp(k / 0.1))
     if si == 6:
         k = t - T(6, 0.25)
         if k >= 0 and t < T(6, 4.9):
             cta = cached("cta", _cta)
-            paste(canvas, cta, 540 + 700 * (1 - ease_out(k / 0.4)), 330)
+            paste(canvas, cta, 540 + 700 * (1 - ease_out(k / 0.4)), 1130)
         k = t - T(6, 4.9)
         if k >= 0:
             ty = cached("ty", lambda: text_el("THANK YOU!", font("Black", 120), fill=WHITE, stroke=10, stroke_fill=NAVY))
-            paste(canvas, ty, 540, 330, scale=back(k / 0.3))
+            paste(canvas, ty, 540, 1150, scale=back(k / 0.3))
 
 def _hook():
     card, pad = rounded(900, 200, 40, NAVY + (235,))

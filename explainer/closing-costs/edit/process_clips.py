@@ -8,8 +8,9 @@ while True:
     ok,f=cap.read()
     if not ok: break
     fr.append(f)
-cms=[masks(f) for f in fr]
-w=np.array([waist_row(f,c[4]) or np.nan for f,c in zip(fr,cms)],float)
+RECOLOR=False  # trousers keep their original colour
+cms=[masks(f) for f in fr] if RECOLOR else [None]*len(fr)
+w=np.array([waist_row(f,c[4]) or np.nan for f,c in zip(fr,cms)],float) if RECOLOR else np.zeros(len(fr))
 w=np.where(np.isnan(w),np.nanmedian(w),w)
 ws=np.array([np.median(w[max(0,k-7):k+8]) for k in range(len(w))])
 p=subprocess.Popen(["ffmpeg","-v","error","-y","-f","rawvideo","-pix_fmt","bgr24","-s","720x1280","-r","30","-i","-","-c:v","libx264","-crf","12","-preset","fast","-pix_fmt","yuv420p",f"work/clean{i}.mp4"],stdin=subprocess.PIPE)
@@ -29,6 +30,6 @@ for f,cm,wy,b in zip(fr,cms,ws,sm):
     x0,y0,x1,y1=[int(round(v)) for v in b]
     if x0<15: x0=0
     g=remove_number(f,(None,(x0,y0-2,x1+2,y1+2)))
-    out,prev=recolor(g,cm,int(wy),prev)
+    out=recolor(g,cm,int(wy),prev)[0] if RECOLOR else g
     p.stdin.write(out.tobytes())
 p.stdin.close(); p.wait(); print(i,len(fr),'done')

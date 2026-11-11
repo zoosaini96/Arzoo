@@ -11,9 +11,9 @@ n=len(tl["segs"])
 fc.append("".join(f"[v{k}]" for k in range(n))+f"concat=n={n}:v=0:a=1,highpass=f=85,equalizer=f=3000:t=q:w=1.2:g=2,acompressor=threshold=-20dB:ratio=3:attack=5:release=120:makeup=3,apad=whole_dur={total}[voice]")
 fc.append("[voice]asplit=2[vmix][vkey]")
 # music
-mi=n; ins += ["-i","assets/mu_33.mp3"]
-fc.append(f"[{mi}:a]atrim=0:{total},asetpts=PTS-STARTPTS,aformat=sample_rates=48000:channel_layouts=stereo,volume=0.32,afade=t=in:d=0.8,afade=t=out:st={total-1.6:.2f}:d=1.6[mus]")
-fc.append("[mus][vkey]sidechaincompress=threshold=0.03:ratio=6:attack=20:release=350:makeup=1[mduck]")
+mi=n; ins += ["-i","assets/mu_34.mp3"]
+fc.append(f"[{mi}:a]atrim=0:{total},asetpts=PTS-STARTPTS,aformat=sample_rates=48000:channel_layouts=stereo,volume=0.36,afade=t=in:d=0.8,afade=t=out:st={total-1.6:.2f}:d=1.6[mus]")
+fc.append("[mus][vkey]sidechaincompress=threshold=0.06:ratio=2.5:attack=30:release=400:makeup=1[mduck]")
 # sfx
 labels=[]
 for j,s in enumerate(tl["sfx"]):
