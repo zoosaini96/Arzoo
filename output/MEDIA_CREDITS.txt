@@ -2,19 +2,21 @@ HBP explainer: media credits and licenses
 
 Your footage: 6 clips (in the order provided) plus 2 CRA screenshots (canada.ca).
 
-B-roll photos (Wikimedia Commons, CC0 / Public Domain; no attribution required):
-- "Residential Street North Battleford.jpg" by Tungilik, CC0
-  https://commons.wikimedia.org/wiki/File:Residential_Street_North_Battleford.jpg
-- "Toronto Skyline, Ontario Canada.jpg", CC0
-  https://commons.wikimedia.org/wiki/File:Toronto_Skyline,_Ontario_Canada.jpg
-- "Piggy-bank-968302.jpg", CC0
-  https://commons.wikimedia.org/wiki/File:Piggy-bank-968302.jpg
-- "Ginkgo in autumn colour over a residential street, Quebec City.jpg" by Wilfredor, CC0
-  https://commons.wikimedia.org/wiki/File:Ginkgo_in_autumn_colour_over_a_residential_street,_Quebec_City.jpg
+B-roll photos: all CC0 (public domain dedication, no attribution required),
+from Unsplash, via Wikimedia Commons:
+- "Small house on an autumn's day" by Scott Webb, used for "to buy your home"
+  https://commons.wikimedia.org/wiki/File:Small_house_on_an_autumn's_day_(Unsplash).jpg
+- "Cute piggy bank" by Fabian Blank, used in the RRSP -> home animation
+  https://commons.wikimedia.org/wiki/File:Cute_piggy_bank_(Unsplash).jpg
+- "Desktop with laptop and calculator", used for "15 years to repay"
+  https://commons.wikimedia.org/wiki/File:Desktop_with_laptop_and_calculator_(Unsplash).jpg
+- "Cozy white house" by Gus Ruballo, used for "buy your first home"
+  https://commons.wikimedia.org/wiki/File:Cozy_white_house_(Unsplash).jpg
 
-Background music (Wikimedia Commons, listed as CC0):
-- "Relaxing-piano-music-351844.wav"
-  https://commons.wikimedia.org/wiki/File:Relaxing-piano-music-351844.wav
+Background music: CC0
+- "Happy Clappy" by John Bartmann
+  https://commons.wikimedia.org/wiki/File:John_Bartmann_-_09_-_Happy_Clappy.ogg
+  (extended with a 3-bar loop so it ends on the end card)
 
 Sound effects (whoosh, pop, ding, cash register, alert, riser, ticks): synthesized from scratch in code
 for this video. Original, no third-party rights.
