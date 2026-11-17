@@ -14,21 +14,24 @@ def F(w, s): return ImageFont.truetype(FONT + f"Inter-{w}.otf", s)
 # ---------------- timeline (frame-accurate trims, source seconds) ----------------
 TRIM = {1: (14, 234), 2: (4, 171), 3: (0, 65), 4: (7, 275), 5: (15, 307), 6: (1, 231), 7: (3, 104), 8: (5, 119)}
 ORDER = [1, 2, 3, 4, 5, 6, 7, 8]
+INS = {4: (124, 8)}  # insert spoken "or" in clip 4 at source frame 124 ("car | furniture"), 8 frames long
+OR_SRC = (7, 2.49, 2.66)  # the "-ore" of "before" in clip 7
 START = {}; acc = 0
 for c in ORDER:
-    a, b = TRIM[c]; START[c] = acc; acc += b - a
+    a, b = TRIM[c]; START[c] = acc; acc += b - a + INS.get(c, (0, 0))[1]
 SPEECH_N = acc; SPEECH_END = SPEECH_N / FPS
 END_CARD = 3.2
 TOTAL = SPEECH_END + END_CARD
 N = int(round(TOTAL * FPS))
 def g(c, t):  # clip-local source second -> output second
-    return START[c] / FPS + t - TRIM[c][0] / FPS
+    sh = INS[c][1] / FPS if c in INS and t >= INS[c][0] / FPS - 1e-6 else 0
+    return START[c] / FPS + t - TRIM[c][0] / FPS + sh
 def clip_at(t):
     for c in ORDER:
         if g(c, TRIM[c][0] / FPS) <= t < g(c, TRIM[c][1] / FPS): return c
     return ORDER[-1]
 
-NAVY = (11, 37, 69); AMBER = (255, 183, 3); GREEN = (46, 196, 140); WHITE = (255, 255, 255)
+NAVY = (32, 30, 30); AMBER = (255, 183, 3); ACCENT = (255, 106, 44); GREEN = (46, 196, 140); WHITE = (255, 255, 255)
 CORAL = (240, 84, 84); GREY = (160, 170, 185); RED = (216, 43, 43)
 
 # captions: (start, end, text) ; *word* = highlight
@@ -43,7 +46,7 @@ CAPS = [
     (g(3, 0.0), g(3, 2.17), "so you know *how much you can afford*."),
     (g(4, .25), g(4, .95), "*Second*,"),
     (g(4, .95), g(4, 2.6), "avoid making *big purchases*"),
-    (g(4, 2.6), g(4, 4.7), "like *financing a car*, *furniture*"),
+    (g(4, 2.6), g(4, 4.7), "like *financing a car* or *furniture*"),
     (g(4, 4.7), g(4, 5.85), "before *closing*,"),
     (g(4, 5.85), g(4, 9.17), "because it may affect your *mortgage qualification*."),
     (g(5, .55), g(5, 1.2), "*Third*,"),
@@ -67,13 +70,13 @@ BROLL = [
     ("24945.mp4", 3.0, g(1, 5.74), g(1, 7.80), 0.45, "Buying a home in Canada", "house"),
     ("6021.mp4", 3.0, g(2, 4.0), g(2, 5.7), 0.50, "Before the house hunt", "house"),
     ("4533.mp4", 9.0, g(2, 5.7), g(3, 2.0), 0.60, "Know your budget", "check"),
-    ("24456.mp4", 3.0, g(4, 2.6), g(4, 4.1), 0.36, "Financing a car", "warn"),
-    ("15853.mp4", 4.0, g(4, 4.1), g(4, 5.25), 0.50, "New furniture", "warn"),
+    ("35540.mp4", 4.0, g(4, 2.6), g(4, 4.1), 0.42, "Financing a car", "warn"),
+    ("3110.mp4", 6.0, g(4, 4.1), g(4, 5.25), 0.62, "New furniture", "warn"),
     ("21373.mp4", 3.0, g(6, 3.55), g(6, 5.05), 0.60, "Talk to your mortgage professional", "bulb"),
     ("36136.mp4", 2.0, g(7, 1.6), g(8, 0.9), 0.60, "Make informed decisions", "check"),
 ]
 CARD_W, CARD_H, CARD_CY = 940, 1175, 860
-WARM = {"24945.mp4", "24456.mp4", "15853.mp4"}
+WARM = {"24945.mp4", "35540.mp4", "3110.mp4"}
 
 TIPS = [  # (n, title, pill, t0, t1)
     (1, "Get pre-approved first", "PRE-APPROVAL", g(2, .15), g(2, 1.95)),
@@ -188,16 +191,16 @@ def chip_img(text, bg=NAVY, fg=WHITE, size=44, icon=None):
     im = rrect((tw + 2*padx + iw, h), h // 2, bg + (242,))
     d = ImageDraw.Draw(im); cx = padx + iw*0.35
     if icon == "check": check_icon(d, cx, h/2, int(h*0.3))
-    if icon == "house": house_icon(d, cx, h/2, h*0.27, AMBER)
+    if icon == "house": house_icon(d, cx, h/2, h*0.27, ACCENT)
     if icon == "warn": warn_icon(d, cx, h/2 + 2, h*0.27)
     if icon == "bulb":
         r = h*0.22
-        d.ellipse([cx-r, h/2-r*1.25, cx+r, h/2+r*0.75], fill=AMBER)
+        d.ellipse([cx-r, h/2-r*1.25, cx+r, h/2+r*0.75], fill=ACCENT)
         d.rectangle([cx-r*0.5, h/2+r*0.6, cx+r*0.5, h/2+r*1.2], fill=GREY)
     d.text((padx + iw, h/2), text, font=font, fill=fg, anchor="lm")
     return shadowed(im, blur=12, off=(0, 6), alpha=120)
 
-def panel_base(title, pw, ph, head=NAVY):
+def panel_base(title, pw, ph, head=ACCENT):
     im = rrect((pw, ph), 40, (255, 255, 255, 240)); d = ImageDraw.Draw(im)
     d.rounded_rectangle([0, 0, pw-1, 112], 40, fill=head + (255,)); d.rectangle([0, 70, pw-1, 112], fill=head + (255,))
     d.text((pw/2, 58), title, font=F("ExtraBold", 50), fill=WHITE, anchor="mm")
@@ -229,24 +232,25 @@ def list_img(title, items, tms, t, mark="check", footer=None, footer_t=None):
 
 def title_img():
     im = Image.new("RGBA", (980, 400), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    d.rounded_rectangle([0, 0, 979, 399], 48, fill=NAVY + (245,))
-    d.ellipse([40, 70, 300, 330], fill=AMBER)
-    d.text((170, 205), "4", font=F("Black", 210), fill=NAVY, anchor="mm")
-    d.text((340, 120), "THINGS EVERY", font=F("Black", 64), fill=WHITE, anchor="lm")
-    d.text((340, 200), "HOME BUYER", font=F("Black", 64), fill=AMBER, anchor="lm")
-    d.text((340, 280), "SHOULD KNOW", font=F("Black", 64), fill=WHITE, anchor="lm")
+    d.rounded_rectangle([0, 0, 979, 399], 48, fill=(255, 255, 255, 245))
+    d.rounded_rectangle([0, 0, 22, 399], 11, fill=ACCENT)
+    d.ellipse([40, 70, 300, 330], fill=ACCENT)
+    d.text((170, 205), "4", font=F("Black", 210), fill=WHITE, anchor="mm")
+    d.text((340, 120), "THINGS EVERY", font=F("Black", 64), fill=NAVY, anchor="lm")
+    d.text((340, 200), "HOME BUYER", font=F("Black", 64), fill=ACCENT, anchor="lm")
+    d.text((340, 280), "SHOULD KNOW", font=F("Black", 64), fill=NAVY, anchor="lm")
     return shadowed(im, blur=24, off=(0, 12), alpha=130)
 
 def tip_img(n, title):
     font = F("Black", 66)
     tw = int(text_w(font, title)); pw = max(700, tw + 120)
     im = Image.new("RGBA", (pw, 420), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    d.rounded_rectangle([0, 90, pw-1, 419], 46, fill=NAVY + (245,))
+    d.rounded_rectangle([0, 90, pw-1, 419], 46, fill=(255, 255, 255, 245))
     cx = pw / 2
-    d.ellipse([cx-95, 0, cx+95, 190], fill=AMBER, outline=WHITE, width=10)
-    d.text((cx, 98), str(n), font=F("Black", 120), fill=NAVY, anchor="mm")
-    d.text((cx, 245), f"TIP {n} OF 4", font=F("ExtraBold", 40), fill=AMBER, anchor="mm")
-    d.text((cx, 330), title, font=font, fill=WHITE, anchor="mm")
+    d.ellipse([cx-95, 0, cx+95, 190], fill=ACCENT, outline=WHITE, width=10)
+    d.text((cx, 98), str(n), font=F("Black", 120), fill=WHITE, anchor="mm")
+    d.text((cx, 245), f"TIP {n} OF 4", font=F("ExtraBold", 40), fill=ACCENT, anchor="mm")
+    d.text((cx, 330), title, font=font, fill=NAVY, anchor="mm")
     return shadowed(im, blur=24, off=(0, 12), alpha=130)
 
 def stamp_img(top, bottom):
@@ -262,8 +266,8 @@ def rate_img(p):
     """'%' badge with 'Interest rate' crossed and the other things growing."""
     pw, ph = 900, 400
     im = rrect((pw, ph), 40, (255, 255, 255, 240)); d = ImageDraw.Draw(im)
-    d.ellipse([40, 60, 320, 340], fill=AMBER)
-    d.text((180, 200), "%", font=F("Black", 170), fill=NAVY, anchor="mm")
+    d.ellipse([40, 60, 320, 340], fill=ACCENT)
+    d.text((180, 200), "%", font=F("Black", 170), fill=WHITE, anchor="mm")
     d.text((370, 135), "Interest rate", font=F("ExtraBold", 58), fill=NAVY, anchor="lm")
     d.text((370, 215), "is not the", font=F("Bold", 50), fill=(90, 100, 120), anchor="lm")
     d.text((370, 285), "only thing!", font=F("ExtraBold", 58), fill=RED, anchor="lm")
@@ -279,8 +283,8 @@ def job_img(p):
     briefcase_icon(d, 150, 150, 70, NAVY)
     # arrow
     ax = 250 + 30 * a
-    d.line([(250, 150), (ax + 100, 150)], fill=AMBER, width=14)
-    d.polygon([(ax + 130, 150), (ax + 95, 122), (ax + 95, 178)], fill=AMBER)
+    d.line([(250, 150), (ax + 100, 150)], fill=ACCENT, width=14)
+    d.polygon([(ax + 130, 150), (ax + 95, 122), (ax + 95, 178)], fill=ACCENT)
     briefcase_icon(d, 500, 150, 70, (120, 130, 150))
     d.text((630, 112), "New", font=F("ExtraBold", 50), fill=NAVY, anchor="lm")
     d.text((630, 182), "job?", font=F("ExtraBold", 50), fill=NAVY, anchor="lm")
@@ -291,22 +295,22 @@ def job_img(p):
 
 def endcard_img():
     im = Image.new("RGBA", (W, 1000), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
-    house_icon(d, W/2, 170, 120, AMBER)
+    house_icon(d, W/2, 170, 120, ACCENT, door=(40, 34, 30))
     d.text((W/2, 400), "Thanks for watching!", font=F("Black", 88), fill=WHITE, anchor="mm")
     d.text((W/2, 500), "Share this with someone", font=F("SemiBold", 48), fill=(225, 232, 245), anchor="mm")
     d.text((W/2, 565), "planning to buy a home.", font=F("SemiBold", 48), fill=(225, 232, 245), anchor="mm")
     x = W/2 - 3*250/2 - 20
-    for i, (lab, col) in enumerate((("LIKE", CORAL), ("SHARE", GREEN), ("FOLLOW", AMBER))):
+    for i, (lab, col) in enumerate((("LIKE", CORAL), ("SHARE", GREEN), ("FOLLOW", ACCENT))):
         cx = x + i * 270 + 125
         d.rounded_rectangle([cx-125, 690, cx+125, 790], 50, fill=col)
-        d.text((cx, 740), lab, font=F("Black", 46), fill=NAVY if col == AMBER else WHITE, anchor="mm")
-    d.text((W/2, 880), "for more home-buying tips", font=F("Bold", 44), fill=AMBER, anchor="mm")
+        d.text((cx, 740), lab, font=F("Black", 46), fill=WHITE, anchor="mm")
+    d.text((W/2, 880), "for more home-buying tips", font=F("Bold", 44), fill=ACCENT, anchor="mm")
     return im
 
 def chapter_img(text):
     font = F("ExtraBold", 34); tw = int(text_w(font, text))
     im = rrect((tw + 70, 66), 33, (0, 0, 0, 150)); d = ImageDraw.Draw(im)
-    d.ellipse([22, 25, 38, 41], fill=AMBER)
+    d.ellipse([22, 25, 38, 41], fill=ACCENT)
     d.text((50, 33), text, font=font, fill=WHITE, anchor="lm")
     return im
 
@@ -324,18 +328,32 @@ def aroll_frames():
         a, b = TRIM[c]
         cmd = ["ffmpeg", "-v", "error", "-i", f"{CLEAN}/c{c}.avi", "-vf", f"select='between(n,{a},{b-1})'",
                "-vsync", "0", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
-        for fr in reader(cmd, W, H): yield fr
+        i = a; prev = None
+        for fr in reader(cmd, W, H):
+            if c in INS and i == INS[c][0]:
+                for _ in range(INS[c][1]): yield prev
+            yield fr; prev = fr; i += 1
 
 def build_speech():
     parts, labs = [], []
-    for k, c in enumerate(ORDER):
-        a, b = TRIM[c]; d = (b - a) / FPS
+    oc, o0, o1 = OR_SRC; NI = len(ORDER)
+    def seg(k, a, b, lab):
+        d = (b - a) / FPS
         parts.append(f"[{k}:a]atrim={a/FPS:.4f}:{b/FPS:.4f},asetpts=PTS-STARTPTS,afade=t=in:d=0.012,afade=t=out:st={d-0.02:.4f}:d=0.02,"
-                     f"apad=whole_dur={d:.4f},atrim=0:{d:.4f}[a{k}]")
-        labs.append(f"[a{k}]")
-    fc = ";".join(parts) + ";" + "".join(labs) + f"concat=n={len(ORDER)}:v=0:a=1,highpass=f=80,afftdn=nf=-25," \
+                     f"apad=whole_dur={d:.4f},atrim=0:{d:.4f}[{lab}]")
+    for k, c in enumerate(ORDER):
+        a, b = TRIM[c]
+        if c in INS:
+            f0, nf = INS[c]; gd = nf / FPS
+            seg(k, a, f0, f"p{k}a"); seg(k, f0, b, f"p{k}b")
+            parts.append(f"[{NI}:a]atrim={o0}:{o1},asetpts=PTS-STARTPTS,afade=t=in:d=0.01,afade=t=out:st={o1-o0-0.025:.4f}:d=0.025,"
+                         f"adelay=40:all=1,apad=whole_dur={gd:.4f},atrim=0:{gd:.4f}[or{k}]")
+            labs += [f"[p{k}a]", f"[or{k}]", f"[p{k}b]"]
+        else:
+            seg(k, a, b, f"a{k}"); labs.append(f"[a{k}]")
+    fc = ";".join(parts) + ";" + "".join(labs) + f"concat=n={len(labs)}:v=0:a=1,highpass=f=80,afftdn=nf=-25," \
          "acompressor=threshold=-20dB:ratio=3:attack=5:release=80,loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000[s]"
-    ins = sum([["-i", f"{SRC}/c{c}.mov"] for c in ORDER], [])
+    ins = sum([["-i", f"{SRC}/c{c}.mov"] for c in ORDER], []) + ["-i", f"{SRC}/c{oc}.mov"]
     subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", fc, "-map", "[s]", "-ac", "2", f"{OUT}/speech.wav"], check=True)
 
 def broll_reader(spec):
@@ -484,7 +502,7 @@ def main():
         if t >= SPEECH_END - 0.25:
             if end_bg is None:
                 eb = Image.fromarray(frame).resize((108, 192), Image.BILINEAR).filter(ImageFilter.GaussianBlur(3)).resize((W, H), Image.BILINEAR)
-                ov = Image.new("RGBA", (W, H), NAVY + (175,))
+                ov = Image.new("RGBA", (W, H), (40, 34, 30, 180))
                 end_bg = eb.convert("RGBA"); end_bg.alpha_composite(ov)
             p = (t - SPEECH_END + 0.25) / 0.45
             L = Image.blend(L, end_bg, min(1, ease_io(p)))
@@ -494,7 +512,7 @@ def main():
         # ---- progress bar
         d = ImageDraw.Draw(L)
         d.rectangle([0, 0, W, 12], fill=(255, 255, 255, 70))
-        d.rectangle([0, 0, int(W * min(1, t / SPEECH_END)), 12], fill=AMBER + (255,))
+        d.rectangle([0, 0, int(W * min(1, t / SPEECH_END)), 12], fill=ACCENT + (255,))
         if only is not None:
             L.convert("RGB").save(f"{OUT}/still_{n:04d}.jpg", quality=88); continue
         enc.stdin.write(L.convert("RGB").tobytes())

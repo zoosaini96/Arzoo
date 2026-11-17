@@ -1,6 +1,6 @@
 # "4 things every home buyer should know" explainer: edit notes and credits
 
-**Output:** `home-buyer-tips-explainer.mp4` is 1080x1920 (9:16), 30 fps, 51.8 s, H.264/AAC, about -15 LUFS.
+**Output:** `home-buyer-tips-explainer.mp4` is 1080x1920 (9:16), 30 fps, 52.0 s, H.264/AAC, about -15 LUFS.
 
 The 8 source clips are joined in the order they were provided (intro, tip 1, tip 1 continued, tip 2, tip 3, tip 4, closing, thank you).
 
@@ -8,9 +8,15 @@ The 8 source clips are joined in the order they were provided (intro, tip 1, tip
 - The iPhone footage is HDR (HLG). It is tone-mapped to standard SDR (hable) so it does not look washed out on normal screens.
 - The sagging cable in the sky behind the speaker is tracked frame by frame and painted out (`edit/wire.py`).
 
+## Speech edit
+In clip 4 an "or" is inserted between "car" and "furniture" (0.27 s). The sound is the "-ore" of "before" from clip 7 (2.49–2.66 s). The video holds for those frames behind the B-roll card.
+
+## Style
+White cards with charcoal text and orange (#FF6A2C) headings and accents.
+
 ## Third-party media (Mixkit Free License: free for commercial use, no attribution required)
 B-roll (mixkit.co video IDs): 24945 (aerial of modern suburban homes), 6021 (couple viewing a house), 4533 (calculator),
-24456 (new-car key handover), 15853 (couple setting up furniture), 21373 (meeting with an advisor), 36136 (couple with house keys).
+35540 (white car at sunset), 3110 (modern living room with sofa), 21373 (meeting with an advisor), 36136 (couple with house keys).
 
 Music: "Motivating Mornings" (Mixkit track 33).
 
