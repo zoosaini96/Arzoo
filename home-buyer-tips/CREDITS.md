@@ -1,29 +1,28 @@
 # "4 things every home buyer should know" explainer: edit notes and credits
 
-**Output:** `home-buyer-tips-explainer.mp4` is 1080x1920 (9:16), 30 fps, about 52.2 s, H.264/AAC, about -15 LUFS.
+**Output:** `home-buyer-tips-explainer.mp4` is 1080x1920 (9:16), 30 fps, about 49.4 s, H.264/AAC, about -15.5 LUFS.
 
 The 8 source clips are joined in upload order: intro, tip 1 (2 clips), tip 2, tip 3, tip 4, outro (2 clips).
 
-## Edits
-- Dead air at clip heads is trimmed. Two long pauses in tip 3 are tightened, and each cut is hidden by a change of framing.
-- Presenter relit: warmer white balance, lifted shadows on face and hands, black outfit kept deep.
-  The person is separated using the MediaPipe selfie-multiclass segmenter (Apache 2.0).
-- Background: golden-hour grade, blue sky replacement, soft portrait-style depth blur, vignette and warm glow.
-- Framing is knee-up instead of full body, with punch-ins on key lines.
-- Motion graphics: hook title, TIP 01-04 banners with a progress tracker, budget meter, warning cards,
-  a checklist synced to the speech, a "speak with your mortgage professional" card, and a recap end card.
-- Captions are word-synced (Whisper transcript) with the active word highlighted and keywords in amber.
+## Edit (minimal, natural version)
+- Dead air at clip heads is trimmed, and two long pauses in tip 3 are tightened.
+- One colour grade on the whole frame (no cut-out, no background blur): softer shadows, gentle warmth in the shadows and midtones, cleaner blue in the highlights, more natural colour in the grass and wood, and light sharpening.
+- Gentle push-in within each shot.
+- Full-screen B-roll, used only on the matching words, with quick dissolves.
+- Clean captions: white text with a soft shadow and the spoken word in yellow, kept in the lower part of the frame.
+- Quiet music bed and one soft whoosh per B-roll. The video fades in and out.
 
 ## Third-party media (Mixkit Free License: free for commercial use, no attribution required)
-B-roll (mixkit.co video IDs): 24945 (aerial suburb), 14977 (couple with advisor), 23476 (car dealership),
-23420 (furniture store), 46977 (documents and magnifying glass), 5660 (job interview), 33357 (couple with house keys).
+B-roll (mixkit.co video IDs, 720p): 6021 (agent showing a home, "house hunt"), 23476 (car dealership, "financing a car"),
+23420 (furniture store, "furniture"), 46977 (documents and magnifying glass, "review your terms"),
+5660 (job interview, "switching your job"), 14977 (advisor with clients, "mortgage professional"),
+33357 (couple with house keys, "before buying a home").
 
-Music: Mixkit track 474 ("Motivating Mornings").
+Music: Mixkit track 474 ("Motivating Mornings"). Sound effect: Mixkit SFX 166.
 
-Sound effects (Mixkit SFX IDs): 3005, 166, 1490, 2870, 2354, 2357, 951, 938.
-
-All graphics are drawn programmatically (Inter font, SIL Open Font License).
+Captions use the Inter font (SIL Open Font License).
 
 ## Rebuild
-The scripts expect the workspace layout `src/c1..c8.mov` plus `src/words.json`, `dl/broll`, `dl/music`, `dl/sfx` and `dl/mc.tflite` next to `edit/`.
-Run them in this order: `prep.py`, then `enhance.py` (in chunks), then `build.py`, then `mix.py`.
+The scripts expect the workspace layout `src/c1..c8.mov` plus `src/words.json`, `dl/broll`, `dl/music` and `dl/sfx` next to `edit/`.
+Run them in this order: `prep.py`, then `build2.py`, then `mix2.py`.
+`enhance.py` and `mix.py` belong to the earlier heavy-effects version and are not used.
