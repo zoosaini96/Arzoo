@@ -13,7 +13,7 @@ In clip 4 an "or" is inserted between "car" and "furniture" (0.2 s). The sound i
 
 ## Third-party media (Mixkit Free License: free for commercial use, no attribution required)
 B-roll (mixkit.co video IDs): 24945 (aerial of modern suburban homes), 6021 (couple viewing a house), 4533 (calculator),
-23125 (white car, parked), 3090 (modern room with designer wooden furniture), 21373 (meeting with an advisor), 36136 (couple with house keys).
+23989 (luxury car showroom), 3090 (modern room with designer wooden furniture), 21373 (meeting with an advisor), 36136 (couple with house keys).
 
 Music: "Motivating Mornings" (Mixkit track 33).
 

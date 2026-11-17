@@ -72,7 +72,7 @@ BROLL = [
     ("24945.mp4", 3.0, g(1, 5.74), g(1, 7.80), 0.45, "Buying a home in Canada", "house"),
     ("6021.mp4", 3.0, g(2, 4.0), g(2, 5.7), 0.50, "Before the house hunt", "house"),
     ("4533.mp4", 9.0, g(2, 5.7), g(3, 2.0), 0.60, "Know your budget", "check"),
-    ("23125.mp4", 14.0, g(4, 2.6), g(4, 4.1), 0.58, "Financing a car", "warn"),
+    ("23989.mp4", 7.5, g(4, 2.6), g(4, 4.1), 0.30, "Financing a car", "warn"),
     ("3090.mp4", 3.0, g(4, 4.1), g(4, 5.25), 0.45, "New furniture", "warn"),
     ("21373.mp4", 3.0, g(6, 3.55), g(6, 5.05), 0.60, "Talk to your mortgage professional", "bulb"),
     ("36136.mp4", 2.0, g(7, 1.6), g(8, 0.9), 0.60, "Make informed decisions", "check"),
