@@ -15,8 +15,8 @@ def F(w, s): return ImageFont.truetype(FONT + f"Inter-{w}.otf", s)
 TRIM = {1: (14, 234), 2: (4, 171), 3: (0, 65), 4: (7, 275), 5: (15, 307), 6: (1, 231), 7: (3, 104), 8: (5, 119)}
 ORDER = [1, 2, 3, 4, 5, 6, 7, 8]
 INS = {4: (124, 6)}  # insert spoken "or" in clip 4 at source frame 124 ("car | furniture"), 8 frames long
-OR_SRC = (1, 5.955, 6.09)  # the "-ore" of "before" in clip 1 (flat ~210 Hz, matches the end of "car")
-OR_TEMPO, OR_DELAY, OR_GAIN = 0.85, 0.008, 1.45
+OR_SRC = (4, 5.075, 5.245)  # the "-ore" of "before closing" in the same clip (flat ~210 Hz, same take)
+OR_TEMPO, OR_DELAY, OR_GAIN = 1.0, 0.012, 1.55
 TONE_SRC = (4, 3.60, 3.73)  # clip-4 room tone used under the inserted gap
 START = {}; acc = 0
 for c in ORDER:
@@ -73,12 +73,13 @@ BROLL = [
     ("6021.mp4", 3.0, g(2, 4.0), g(2, 5.7), 0.50, "Before the house hunt", "house"),
     ("4533.mp4", 9.0, g(2, 5.7), g(3, 2.0), 0.60, "Know your budget", "check"),
     ("23989.mp4", 7.5, g(4, 2.6), g(4, 4.1), 0.30, "Financing a car", "warn"),
-    ("3090.mp4", 3.0, g(4, 4.1), g(4, 5.25), 0.45, "New furniture", "warn"),
+    ("4046.mp4", 2.0, g(4, 4.1), g(4, 5.25), 0.72, "New furniture", "warn"),
     ("21373.mp4", 3.0, g(6, 3.55), g(6, 5.05), 0.60, "Talk to your mortgage professional", "bulb"),
     ("36136.mp4", 2.0, g(7, 1.6), g(8, 0.9), 0.60, "Make informed decisions", "check"),
 ]
 CARD_W, CARD_H, CARD_CY = 940, 1175, 860
 WARM = {"24945.mp4"}
+LIFT = {"4046.mp4"}  # brighten the darker room shot
 
 TIPS = [  # (n, title, pill, t0, t1)
     (1, "Get pre-approved first", "PRE-APPROVAL", g(2, .15), g(2, 1.95)),
@@ -348,7 +349,7 @@ def build_speech():
             f0, nf = INS[c]; gd = nf / FPS
             seg(k, a, f0, f"p{k}a"); seg(k, f0, b, f"p{k}b")
             od = (o1 - o0) / OR_TEMPO; tc, t0_, t1_ = TONE_SRC
-            parts.append(f"[{NI}:a]atrim={o0}:{o1},asetpts=PTS-STARTPTS,atempo={OR_TEMPO},volume={OR_GAIN},"
+            parts.append(f"[{NI}:a]atrim={o0}:{o1},asetpts=PTS-STARTPTS,volume={OR_GAIN},"
                          f"afade=t=in:d=0.018,afade=t=out:st={od-0.035:.4f}:d=0.035,adelay={int(OR_DELAY*1000)}:all=1,"
                          f"apad=whole_dur={gd:.4f},atrim=0:{gd:.4f}[orv{k}]")
             parts.append(f"[{k}:a]atrim={t0_}:{t1_},asetpts=PTS-STARTPTS,asplit[tn{k}a][tn{k}b];[tn{k}b]areverse[tn{k}r];"
@@ -367,7 +368,7 @@ def broll_reader(spec):
     dur = t1 - t0 + 0.3
     x = int(cx * 1280 - 288); x = max(0, min(1280 - 576, x))
     cmd = ["ffmpeg", "-v", "error", "-ss", str(ss), "-t", f"{dur:.3f}", "-i", f"{DL}/broll/{f}",
-           "-vf", f"fps=30,scale=1280:720,crop=576:720:{x}:0,scale={CARD_W}:{CARD_H}:flags=lanczos,eq=contrast=1.04:saturation=1.08" + (",colorbalance=rs=0.05:gs=0.01:bs=-0.06:rm=0.03:bm=-0.04,eq=brightness=0.02:saturation=1.12" if f in WARM else ""),
+           "-vf", f"fps=30,scale=1280:720,crop=576:720:{x}:0,scale={CARD_W}:{CARD_H}:flags=lanczos,eq=contrast=1.04:saturation=1.08" + (",colorbalance=rs=0.05:gs=0.01:bs=-0.06:rm=0.03:bm=-0.04,eq=brightness=0.02:saturation=1.12" if f in WARM else "") + (",eq=gamma=1.18:brightness=0.03" if f in LIFT else ""),
            "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
     return reader(cmd, CARD_W, CARD_H)
 

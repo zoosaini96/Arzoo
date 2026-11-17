@@ -9,11 +9,11 @@ The 8 source clips are joined in the order they were provided (intro, tip 1, tip
 - The sagging cable in the sky behind the speaker is tracked frame by frame and painted out (`edit/wire.py`).
 
 ## Speech edit
-In clip 4 an "or" is inserted between "car" and "furniture" (0.2 s). The sound is the "-ore" of "before" from clip 1 (5.955–6.09 s), chosen because its pitch (~210 Hz) matches the end of "car". It is slowed to 85 % with the pitch kept, raised to match her level, and laid over clip-4 room tone. The video holds for those frames behind the B-roll card.
+In clip 4 an "or" is inserted between "car" and "furniture" (0.2 s). The sound is the "-ore" of "before closing" from the same clip (5.075–5.245 s, flat ~210 Hz). It is used at original speed, raised to match her level, and laid over clip-4 room tone. The video holds for those frames behind the B-roll card.
 
 ## Third-party media (Mixkit Free License: free for commercial use, no attribution required)
 B-roll (mixkit.co video IDs): 24945 (aerial of modern suburban homes), 6021 (couple viewing a house), 4533 (calculator),
-23989 (luxury car showroom), 3090 (modern room with designer wooden furniture), 21373 (meeting with an advisor), 36136 (couple with house keys).
+23989 (luxury car showroom), 4046 (elegant furnished room), 21373 (meeting with an advisor), 36136 (couple with house keys).
 
 Music: "Motivating Mornings" (Mixkit track 33).
 
