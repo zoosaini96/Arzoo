@@ -64,15 +64,16 @@ CAPS = [
 
 # B-roll: (file, src_start, t0, t1, crop_center_x (0-1 of 1280), label, icon)
 BROLL = [
-    ("11010.mp4", 3.0, g(1, 5.74), g(1, 7.80), 0.53, "Buying a home in Canada", "house"),
+    ("24945.mp4", 3.0, g(1, 5.74), g(1, 7.80), 0.45, "Buying a home in Canada", "house"),
     ("6021.mp4", 3.0, g(2, 4.0), g(2, 5.7), 0.50, "Before the house hunt", "house"),
     ("4533.mp4", 9.0, g(2, 5.7), g(3, 2.0), 0.60, "Know your budget", "check"),
-    ("23369.mp4", 2.0, g(4, 2.6), g(4, 4.1), 0.55, "Financing a car", "warn"),
-    ("23420.mp4", 5.0, g(4, 4.1), g(4, 5.25), 0.55, "New furniture", "warn"),
+    ("24456.mp4", 3.0, g(4, 2.6), g(4, 4.1), 0.36, "Financing a car", "warn"),
+    ("15853.mp4", 4.0, g(4, 4.1), g(4, 5.25), 0.50, "New furniture", "warn"),
     ("21373.mp4", 3.0, g(6, 3.55), g(6, 5.05), 0.60, "Talk to your mortgage professional", "bulb"),
     ("36136.mp4", 2.0, g(7, 1.6), g(8, 0.9), 0.60, "Make informed decisions", "check"),
 ]
 CARD_W, CARD_H, CARD_CY = 940, 1175, 860
+WARM = {"24945.mp4", "24456.mp4", "15853.mp4"}
 
 TIPS = [  # (n, title, pill, t0, t1)
     (1, "Get pre-approved first", "PRE-APPROVAL", g(2, .15), g(2, 1.95)),
@@ -342,7 +343,7 @@ def broll_reader(spec):
     dur = t1 - t0 + 0.3
     x = int(cx * 1280 - 288); x = max(0, min(1280 - 576, x))
     cmd = ["ffmpeg", "-v", "error", "-ss", str(ss), "-t", f"{dur:.3f}", "-i", f"{DL}/broll/{f}",
-           "-vf", f"fps=30,scale=1280:720,crop=576:720:{x}:0,scale={CARD_W}:{CARD_H}:flags=lanczos,eq=contrast=1.04:saturation=1.08",
+           "-vf", f"fps=30,scale=1280:720,crop=576:720:{x}:0,scale={CARD_W}:{CARD_H}:flags=lanczos,eq=contrast=1.04:saturation=1.08" + (",colorbalance=rs=0.05:gs=0.01:bs=-0.06:rm=0.03:bm=-0.04,eq=brightness=0.02:saturation=1.12" if f in WARM else ""),
            "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
     return reader(cmd, CARD_W, CARD_H)
 
